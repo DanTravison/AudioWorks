@@ -344,11 +344,6 @@ You should have received a copy of the GNU Affero General Public License along w
                     <MenuItem Header="Save"
                               Command="{Binding SaveSelectionCommand}"/>
                     <Separator/>
-                    <MenuItem Header="Analyze..."
-                              Command="{Binding AnalyzeSelectionCommand}"/>
-                    <MenuItem Header="Encode..."
-                              Command="{Binding EncodeSelectionCommand}"/>
-                    <Separator/>
                     <MenuItem Header="Remove"
                               Command="{Binding RemoveSelectionCommand}"/>
                 </ContextMenu>
