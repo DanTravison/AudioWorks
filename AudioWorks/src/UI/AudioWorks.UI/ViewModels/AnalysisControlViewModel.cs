@@ -24,17 +24,20 @@ using System.Media;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using Prism.Mvvm;
 
 namespace AudioWorks.UI.ViewModels
 {
     // ReSharper disable once UnusedMember.Global
-    public class AnalysisControlViewModel : DialogViewModelBase
+    public class AnalysisControlViewModel : BindableBase, IDialogAware
     {
         readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
         readonly IAnalysisSettingService _analysisSettingService;
         string _description = string.Empty;
         bool _isInProgress = true;
         int _progress;
+
+        public string Title { get; set; } = string.Empty;
 
         public string Description
         {
@@ -62,7 +65,7 @@ namespace AudioWorks.UI.ViewModels
             _analysisSettingService = analysisSettingService;
         }
 
-        public override void OnDialogOpened(IDialogParameters parameters)
+        public void OnDialogOpened(IDialogParameters parameters)
         {
             var name = parameters.GetValue<string>("Name");
             var audioFiles = parameters.GetValue<ICollectionView>("AudioFiles");
@@ -109,10 +112,14 @@ namespace AudioWorks.UI.ViewModels
             });
         }
 
-        public override void OnDialogClosed()
+        public bool CanCloseDialog() => true;
+
+        public void OnDialogClosed()
         {
             if (_isInProgress)
                 _cancellationSource.Cancel();
         }
+        
+        public event Action<IDialogResult> RequestClose;
     }
 }

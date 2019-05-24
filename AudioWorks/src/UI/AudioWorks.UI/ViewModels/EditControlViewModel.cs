@@ -18,12 +18,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Prism.Commands;
+using Prism.Mvvm;
 using Prism.Services.Dialogs;
 
 namespace AudioWorks.UI.ViewModels
 {
     // ReSharper disable once UnusedMember.Global
-    public class EditControlViewModel : DialogViewModelBase
+    public class EditControlViewModel : BindableBase, IDialogAware
     {
         List<AudioFileViewModel>? _audioFiles;
         bool _isMultiple;
@@ -51,6 +52,8 @@ namespace AudioWorks.UI.ViewModels
         string _trackNumber = string.Empty;
         bool _trackCountIsCommon;
         string _trackCount = string.Empty;
+
+        public string Title { get; set; } = string.Empty;
 
         public bool IsMultiple
         {
@@ -237,11 +240,11 @@ namespace AudioWorks.UI.ViewModels
                             audioFile.Metadata.TrackCount = TrackCount;
                     }
 
-                RaiseRequestClose(new DialogResult(true));
+                RequestClose?.Invoke(new DialogResult(true));
             });
         }
 
-        public override void OnDialogOpened(IDialogParameters parameters)
+        public void OnDialogOpened(IDialogParameters parameters)
         {
             _audioFiles = parameters.GetValue<List<AudioFileViewModel>>("AudioFiles");
 
@@ -252,7 +255,8 @@ namespace AudioWorks.UI.ViewModels
 
             foreach (var propertyName in thisType
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
-                .Where(prop => prop.PropertyType == typeof(string))
+                .Where(prop => prop.PropertyType == typeof(string) &&
+                               !prop.Name.Equals("Title", StringComparison.Ordinal))
                 .Select(prop => prop.Name))
             {
                 var propertyInfo = typeof(AudioMetadataViewModel).GetProperty(propertyName);
@@ -271,5 +275,13 @@ namespace AudioWorks.UI.ViewModels
                 }
             }
         }
+
+        public bool CanCloseDialog() => true;
+
+        public void OnDialogClosed()
+        {
+        }
+
+        public event Action<IDialogResult> RequestClose;
     }
 }
