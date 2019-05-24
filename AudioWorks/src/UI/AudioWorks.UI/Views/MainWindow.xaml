@@ -220,6 +220,10 @@ You should have received a copy of the GNU Affero General Public License along w
                 </fluent:RibbonGroupBox>
 
                 <fluent:RibbonGroupBox Header="Metadata" ItemContainerStyle="{StaticResource LargeRibbonButton}">
+                    <fluent:Button Header="Edit"
+                                   Command="{Binding EditSelectionCommand}"
+                                   LargeIcon="{StaticResource EditTagImage}"
+                                   fluent:KeyTip.Keys="ED"/>
                     <fluent:Button Header="Save All"
                                    Command="{Binding SaveAllCommand}"
                                    LargeIcon="{StaticResource SaveAllImage}"
@@ -262,7 +266,7 @@ You should have received a copy of the GNU Affero General Public License along w
                     <fluent:DropDownButton Header="Encode All"
                                            LargeIcon="{StaticResource OutputImage}"
                                            ItemsSource="{Binding Encoders}"
-                                           fluent:KeyTip.Keys="E">
+                                           fluent:KeyTip.Keys="EN">
                         <fluent:DropDownButton.ItemContainerStyle>
                             <Style TargetType="MenuItem">
                                 <Setter Property="Header"
