@@ -140,7 +140,6 @@ namespace AudioWorks.UI.ViewModels
         public MainWindowViewModel(
             IFileSelectionService fileSelectionService,
             IDialogService prismDialogService,
-            IEncoderSettingService encoderSettingService,
             IDialogCoordinator metroDialogCoordinator)
         {
             var audioFilesCollection = new ObservableCollection<AudioFileViewModel>();
