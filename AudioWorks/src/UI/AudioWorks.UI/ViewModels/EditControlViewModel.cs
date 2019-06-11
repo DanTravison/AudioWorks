@@ -240,7 +240,7 @@ namespace AudioWorks.UI.ViewModels
                             audioFile.Metadata.TrackCount = TrackCount;
                     }
 
-                RequestClose?.Invoke(new DialogResult(true));
+                RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
             });
         }
 
