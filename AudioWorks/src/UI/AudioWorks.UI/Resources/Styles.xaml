@@ -39,7 +39,7 @@ You should have received a copy of the GNU Affero General Public License along w
     </Style>
     <Style TargetType="Slider"
            x:Key="SettingSlider"
-           BasedOn="{StaticResource MahApps.Metro.Styles.Slider.Win10}">
+           BasedOn="{StaticResource MahApps.Styles.Slider.Win10}">
         <Setter Property="TickPlacement"
                 Value="TopLeft"/>
         <Setter Property="AutoToolTipPlacement"

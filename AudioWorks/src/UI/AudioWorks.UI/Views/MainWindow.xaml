@@ -351,7 +351,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
             <DataGrid.Style>
                 <Style TargetType="{x:Type DataGrid}"
-                       BasedOn="{StaticResource MetroDataGrid}">
+                       BasedOn="{StaticResource MahApps.Styles.DataGrid}">
                     <Setter Property="AlternatingRowBackground"
                             Value="{DynamicResource GrayBrush10}"/>
                 </Style>
@@ -359,7 +359,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader"
-                       BasedOn="{StaticResource MetroDataGridColumnHeader}">
+                       BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
                     <Setter Property="FontWeight"
                             Value="Normal"/>
                     <Setter Property="mahapps:ControlsHelper.ContentCharacterCasing"
@@ -392,12 +392,12 @@ You should have received a copy of the GNU Affero General Public License along w
 
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow"
-                       BasedOn="{StaticResource MetroDataGridRow}">
+                       BasedOn="{StaticResource MahApps.Styles.DataGridRow}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Metadata.Modified}"
                                      Value="True">
                             <Setter Property="BorderBrush"
-                                    Value="{StaticResource HighlightBrush}"/>
+                                    Value="{StaticResource MahApps.Brushes.Highlight}"/>
                             <Setter Property="BorderThickness"
                                     Value="1"/>
                         </DataTrigger>
@@ -429,15 +429,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                                      Visibility="{Binding IsChecked, Source={x:Reference TrackNumberColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.TrackNumberIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.TrackNumberIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -451,15 +451,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                                      Visibility="{Binding IsChecked, Source={x:Reference TrackCountColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.TrackCountIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.TrackCountIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -471,15 +471,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference TitleColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.SongTitleIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.SongTitleIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -491,15 +491,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference ArtistColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.ArtistIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.ArtistIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -511,15 +511,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference AlbumArtistColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.AlbumArtistIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.AlbumArtistIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -531,15 +531,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference ComposerColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.ComposerIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.ComposerIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -551,15 +551,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference AlbumColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.AlbumIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.AlbumIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -573,15 +573,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                                      Visibility="{Binding IsChecked, Source={x:Reference DayColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.DayIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.DayIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -595,15 +595,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                                      Visibility="{Binding IsChecked, Source={x:Reference MonthColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.MonthIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.MonthIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -616,15 +616,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                                      Visibility="{Binding IsChecked, Source={x:Reference YearColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.YearIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.YearIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -645,15 +645,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference GenreColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.GenreIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.GenreIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -665,15 +665,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference CommentColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.CommentIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.CommentIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -686,15 +686,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference TrackGainColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.TrackGainIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.TrackGainIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -707,15 +707,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference TrackPeakColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.TrackPeakIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.TrackPeakIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -728,15 +728,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference AlbumGainColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.AlbumGainIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.AlbumGainIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -749,15 +749,15 @@ You should have received a copy of the GNU Affero General Public License along w
                                     Visibility="{Binding IsChecked, Source={x:Reference AlbumPeakColumnCheckBox}, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                     <DataGridColumn.CellStyle>
                         <Style TargetType="DataGridCell"
-                               BasedOn="{StaticResource MetroDataGridCell}">
+                               BasedOn="{StaticResource MahApps.Styles.DataGridCell}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Metadata.AlbumPeakIsModified}"
                                              Value="True">
-                                    <Setter Property="Foreground" Value="{StaticResource HighlightBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Highlight}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Metadata.AlbumPeakIsModified}"
                                              Value="False">
-                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Text}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

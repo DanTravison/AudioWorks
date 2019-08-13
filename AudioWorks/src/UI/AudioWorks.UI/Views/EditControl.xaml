@@ -54,7 +54,7 @@ You should have received a copy of the GNU Affero General Public License along w
         </Style>
         <Style TargetType="mahapps:ToggleSwitch"
                x:Key="ToggleSwitch"
-               BasedOn="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}">
+               BasedOn="{StaticResource MahApps.Styles.ToggleSwitch.Win10}">
             <Setter Property="VerticalAlignment"
                     Value="Top"/>
             <Setter Property="Margin"
