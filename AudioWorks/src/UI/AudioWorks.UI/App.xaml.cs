@@ -43,7 +43,8 @@ namespace AudioWorks.UI
             containerRegistry.RegisterInstance(DialogCoordinator.Instance);
         }
 
-        protected override IModuleCatalog CreateModuleCatalog() => new ConfigurationModuleCatalog();
+        protected override IModuleCatalog CreateModuleCatalog() =>
+            new DirectoryModuleCatalog { ModulePath = "Modules" };
 
         protected override void OnStartup(StartupEventArgs e)
         {
