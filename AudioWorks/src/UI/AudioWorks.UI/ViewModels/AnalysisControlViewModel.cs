@@ -119,7 +119,7 @@ namespace AudioWorks.UI.ViewModels
             if (_isInProgress)
                 _cancellationSource.Cancel();
         }
-        
+
         public event Action<IDialogResult> RequestClose;
     }
 }

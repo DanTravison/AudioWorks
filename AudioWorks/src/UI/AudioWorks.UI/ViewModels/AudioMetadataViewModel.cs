@@ -17,7 +17,6 @@ using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 using AudioWorks.Common;
-using NuGet.Configuration;
 using Prism.Mvvm;
 
 namespace AudioWorks.UI.ViewModels
