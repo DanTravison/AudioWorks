@@ -369,7 +369,6 @@ namespace AudioWorks.UI.ViewModels
             if (coverArt == null) return null;
 
             fixed (byte* dataAddress = coverArt.Data)
-            {
                 using (var stream = new UnmanagedMemoryStream(dataAddress, coverArt.Data.Length))
                 {
                     var result = new BitmapImage();
@@ -380,7 +379,6 @@ namespace AudioWorks.UI.ViewModels
                     result.Freeze();
                     return result;
                 }
-            }
         }
     }
 }

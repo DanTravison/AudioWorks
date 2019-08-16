@@ -61,11 +61,9 @@ namespace AudioWorks.UI.ViewModels
                 if (!value) return;
 
                 SetGroupDescriptions(null);
-                SetProperty(ref _groupingDisabled, value);
-                _groupByDirectory = false;
-                RaisePropertyChanged("GroupByDirectory");
-                _groupByAlbum = false;
-                RaisePropertyChanged("GroupByAlbum");
+                SetProperty(ref _groupingDisabled, true);
+                SetProperty(ref _groupByDirectory, false, "GroupByDirectory");
+                SetProperty(ref _groupByAlbum, false, "GroupByAlbum");
             }
         }
 
@@ -77,11 +75,9 @@ namespace AudioWorks.UI.ViewModels
                 if (!value) return;
 
                 SetGroupDescriptions(_directoryGroupDescription);
-                SetProperty(ref _groupByDirectory, value);
-                _groupingDisabled = false;
-                RaisePropertyChanged("GroupingDisabled");
-                _groupByAlbum = false;
-                RaisePropertyChanged("GroupByAlbum");
+                SetProperty(ref _groupByDirectory, true);
+                SetProperty(ref _groupingDisabled, false, "GroupingDisabled");
+                SetProperty(ref _groupByAlbum, false, "GroupByAlbum");
             }
         }
 
@@ -93,11 +89,9 @@ namespace AudioWorks.UI.ViewModels
                 if (!value) return;
 
                 SetGroupDescriptions(_albumGroupDescription);
-                SetProperty(ref _groupByAlbum, value);
-                _groupingDisabled = false;
-                RaisePropertyChanged("GroupingDisabled");
-                _groupByDirectory = false;
-                RaisePropertyChanged("GroupByDirectory");
+                SetProperty(ref _groupByAlbum, true);
+                SetProperty(ref _groupingDisabled, false, "GroupingDisabled");
+                SetProperty(ref _groupByDirectory, false, "GroupByDirectory");
             }
         }
 
