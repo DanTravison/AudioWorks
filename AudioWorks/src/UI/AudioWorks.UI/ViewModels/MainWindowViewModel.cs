@@ -18,6 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,15 +37,42 @@ namespace AudioWorks.UI.ViewModels
     // ReSharper disable once UnusedMember.Global
     public class MainWindowViewModel : BindableBase
     {
-        bool _isBusy;
-        bool _groupingDisabled;
-        bool _groupByDirectory;
-        bool _groupByAlbum;
+        readonly Configuration _configuration;
         readonly object _lock = new object();
         readonly GroupDescription _directoryGroupDescription = new PropertyGroupDescription
             { Converter = new GroupByDirectoryConverter() };
         readonly GroupDescription _albumGroupDescription = new PropertyGroupDescription
             { Converter = new GroupByAlbumConverter() };
+        bool _isBusy;
+        bool _groupingDisabled;
+        bool _groupByDirectory;
+        bool _groupByAlbum;
+        bool _showFileName;
+        bool _showPath;
+        bool _showAlbum;
+        bool _showAlbumArtist;
+        bool _showArtist;
+        bool _showComment;
+        bool _showComposer;
+        bool _showCoverArt;
+        bool _showDay;
+        bool _showGenre;
+        bool _showMonth;
+        bool _showTitle;
+        bool _showTrackNumber;
+        bool _showTrackCount;
+        bool _showYear;
+        bool _showAlbumGain;
+        bool _showAlbumPeak;
+        bool _showTrackGain;
+        bool _showTrackPeak;
+        bool _showBitRate;
+        bool _showBitsPerSample;
+        bool _showChannels;
+        bool _showFormat;
+        bool _showFrameCount;
+        bool _showPlayLength;
+        bool _showSampleRate;
         List<AudioFileViewModel> _selectedAudioFiles = new List<AudioFileViewModel>(0);
 
         public bool IsBusy
@@ -64,6 +92,7 @@ namespace AudioWorks.UI.ViewModels
                 SetProperty(ref _groupingDisabled, true);
                 SetProperty(ref _groupByDirectory, false, "GroupByDirectory");
                 SetProperty(ref _groupByAlbum, false, "GroupByAlbum");
+                SaveSetting("GroupBy", "None");
             }
         }
 
@@ -78,6 +107,7 @@ namespace AudioWorks.UI.ViewModels
                 SetProperty(ref _groupByDirectory, true);
                 SetProperty(ref _groupingDisabled, false, "GroupingDisabled");
                 SetProperty(ref _groupByAlbum, false, "GroupByAlbum");
+                SaveSetting("GroupBy", "Directory");
             }
         }
 
@@ -92,6 +122,267 @@ namespace AudioWorks.UI.ViewModels
                 SetProperty(ref _groupByAlbum, true);
                 SetProperty(ref _groupingDisabled, false, "GroupingDisabled");
                 SetProperty(ref _groupByDirectory, false, "GroupByDirectory");
+                SaveSetting("GroupBy", "Album");
+            }
+        }
+
+        public bool ShowFileName
+        {
+            get => _showFileName;
+            set
+            {
+                SetProperty(ref _showFileName, value);
+                SaveSetting("ShowFileName", value);
+            }
+        }
+
+        public bool ShowPath
+        {
+            get => _showPath;
+            set
+            {
+                SetProperty(ref _showPath, value);
+                SaveSetting("ShowPath", value);
+            }
+        }
+
+        public bool ShowAlbum
+        {
+            get => _showAlbum;
+            set
+            {
+                SetProperty(ref _showAlbum, value);
+                SaveSetting("ShowAlbum", value);
+            }
+        }
+
+        public bool ShowAlbumArtist
+        {
+            get => _showAlbumArtist;
+            set
+            {
+                SetProperty(ref _showAlbumArtist, value);
+                SaveSetting("ShowAlbumArtist", value);
+            }
+        }
+
+        public bool ShowArtist
+        {
+            get => _showArtist;
+            set
+            {
+                SetProperty(ref _showArtist, value);
+                SaveSetting("ShowArtist", value);
+            }
+        }
+
+        public bool ShowComment
+        {
+            get => _showComment;
+            set
+            {
+                SetProperty(ref _showComment, value);
+                SaveSetting("ShowComment", value);
+            }
+        }
+
+        public bool ShowComposer
+        {
+            get => _showComposer;
+            set
+            {
+                SetProperty(ref _showComposer, value);
+                SaveSetting("ShowComposer", value);
+            }
+        }
+
+        public bool ShowCoverArt
+        {
+            get => _showCoverArt;
+            set
+            {
+                SetProperty(ref _showCoverArt, value);
+                SaveSetting("ShowCoverArt", value);
+            }
+        }
+
+        public bool ShowDay
+        {
+            get => _showDay;
+            set
+            {
+                SetProperty(ref _showDay, value);
+                SaveSetting("ShowDay", value);
+            }
+        }
+
+        public bool ShowGenre
+        {
+            get => _showGenre;
+            set
+            {
+                SetProperty(ref _showGenre, value);
+                SaveSetting("ShowGenre", value);
+            }
+        }
+
+        public bool ShowMonth
+        {
+            get => _showMonth;
+            set
+            {
+                SetProperty(ref _showMonth, value);
+                SaveSetting("ShowMonth", value);
+            }
+        }
+
+        public bool ShowTitle
+        {
+            get => _showTitle;
+            set
+            {
+                SetProperty(ref _showTitle, value);
+                SaveSetting("ShowTitle", value);
+            }
+        }
+
+        public bool ShowTrackNumber
+        {
+            get => _showTrackNumber;
+            set
+            {
+                SetProperty(ref _showTrackNumber, value);
+                SaveSetting("ShowTrackNumber", value);
+            }
+        }
+
+        public bool ShowTrackCount
+        {
+            get => _showTrackCount;
+            set
+            {
+                SetProperty(ref _showTrackCount, value);
+                SaveSetting("ShowTrackCount", value);
+            }
+        }
+
+        public bool ShowYear
+        {
+            get => _showYear;
+            set
+            {
+                SetProperty(ref _showYear, value);
+                SaveSetting("ShowYear", value);
+            }
+        }
+
+        public bool ShowAlbumGain
+        {
+            get => _showAlbumGain;
+            set
+            {
+                SetProperty(ref _showAlbumGain, value);
+                SaveSetting("ShowAlbumGain", value);
+            }
+        }
+
+        public bool ShowAlbumPeak
+        {
+            get => _showAlbumPeak;
+            set
+            {
+                SetProperty(ref _showAlbumPeak, value);
+                SaveSetting("ShowAlbumPeak", value);
+            }
+        }
+
+        public bool ShowTrackGain
+        {
+            get => _showTrackGain;
+            set
+            {
+                SetProperty(ref _showTrackGain, value);
+                SaveSetting("ShowTrackGain", value);
+            }
+        }
+
+        public bool ShowTrackPeak
+        {
+            get => _showTrackPeak;
+            set
+            {
+                SetProperty(ref _showTrackPeak, value);
+                SaveSetting("ShowTrackPeak", value);
+            }
+        }
+
+        public bool ShowBitRate
+        {
+            get => _showBitRate;
+            set
+            {
+                SetProperty(ref _showBitRate, value);
+                SaveSetting("ShowBitRate", value);
+            }
+        }
+
+        public bool ShowBitsPerSample
+        {
+            get => _showBitsPerSample;
+            set
+            {
+                SetProperty(ref _showBitsPerSample, value);
+                SaveSetting("ShowBitsPerSample", value);
+            }
+        }
+
+        public bool ShowChannels
+        {
+            get => _showChannels;
+            set
+            {
+                SetProperty(ref _showChannels, value);
+                SaveSetting("ShowChannels", value);
+            }
+        }
+
+        public bool ShowFormat
+        {
+            get => _showFormat;
+            set
+            {
+                SetProperty(ref _showFormat, value);
+                SaveSetting("ShowFormat", value);
+            }
+        }
+
+        public bool ShowFrameCount
+        {
+            get => _showFrameCount;
+            set
+            {
+                SetProperty(ref _showFrameCount, value);
+                SaveSetting("ShowFrameCount", value);
+            }
+        }
+
+        public bool ShowPlayLength
+        {
+            get => _showPlayLength;
+            set
+            {
+                SetProperty(ref _showPlayLength, value);
+                SaveSetting("ShowPlayLength", value);
+            }
+        }
+
+        public bool ShowSampleRate
+        {
+            get => _showSampleRate;
+            set
+            {
+                SetProperty(ref _showSampleRate, value);
+                SaveSetting("ShowSampleRate", value);
             }
         }
 
@@ -140,7 +431,74 @@ namespace AudioWorks.UI.ViewModels
             BindingOperations.EnableCollectionSynchronization(audioFilesCollection, _lock);
             AudioFiles = CollectionViewSource.GetDefaultView(audioFilesCollection);
 
-            GroupByDirectory = true;
+            _configuration = InitializeConfiguration();
+            var settings = _configuration.AppSettings.Settings;
+
+            switch (settings["GroupBy"].Value.ToLowerInvariant())
+            {
+                case "directory":
+                    GroupByDirectory = true;
+                    break;
+                case "album":
+                    GroupByAlbum = true;
+                    break;
+                default:
+                    GroupingDisabled = true;
+                    break;
+            }
+
+            if (bool.TryParse(settings["ShowFileName"].Value, out var showFileName) && showFileName)
+                ShowFileName = true;
+            if (bool.TryParse(settings["ShowPath"].Value, out var showPath) && showPath)
+                ShowPath = true;
+            if (bool.TryParse(settings["ShowAlbum"].Value, out var showAlbum) && showAlbum)
+                ShowAlbum = true;
+            if (bool.TryParse(settings["ShowAlbumArtist"].Value, out var showAlbumArtist) && showAlbumArtist)
+                ShowAlbumArtist = true;
+            if (bool.TryParse(settings["ShowArtist"].Value, out var showArtist) && showArtist)
+                ShowArtist = true;
+            if (bool.TryParse(settings["ShowComment"].Value, out var showComment) && showComment)
+                ShowComment = true;
+            if (bool.TryParse(settings["ShowComposer"].Value, out var showComposer) && showComposer)
+                ShowComposer = true;
+            if (bool.TryParse(settings["ShowCoverArt"].Value, out var showCoverArt) && showCoverArt)
+                ShowCoverArt = true;
+            if (bool.TryParse(settings["ShowDay"].Value, out var showDay) && showDay)
+                ShowDay = true;
+            if (bool.TryParse(settings["ShowGenre"].Value, out var showGenre) && showGenre)
+                ShowGenre = true;
+            if (bool.TryParse(settings["ShowMonth"].Value, out var showMonth) && showMonth)
+                ShowMonth = true;
+            if (bool.TryParse(settings["ShowTitle"].Value, out var showTitle) && showTitle)
+                ShowTitle = true;
+            if (bool.TryParse(settings["ShowTrackNumber"].Value, out var showTrackNumber) && showTrackNumber)
+                ShowTrackNumber = true;
+            if (bool.TryParse(settings["ShowTrackCount"].Value, out var showTrackCount) && showTrackCount)
+                ShowTrackCount = true;
+            if (bool.TryParse(settings["ShowYear"].Value, out var showYear) && showYear)
+                ShowYear = true;
+            if (bool.TryParse(settings["ShowAlbumGain"].Value, out var showAlbumGain) && showAlbumGain)
+                ShowAlbumGain = true;
+            if (bool.TryParse(settings["ShowAlbumPeak"].Value, out var showAlbumPeak) && showAlbumPeak)
+                ShowAlbumPeak = true;
+            if (bool.TryParse(settings["ShowTrackGain"].Value, out var showTrackGain) && showTrackGain)
+                ShowTrackGain = true;
+            if (bool.TryParse(settings["ShowTrackPeak"].Value, out var showTrackPeak) && showTrackPeak)
+                ShowTrackPeak = true;
+            if (bool.TryParse(settings["ShowBitRate"].Value, out var showBitRate) && showBitRate)
+                ShowBitRate = true;
+            if (bool.TryParse(settings["ShowBitsPerSample"].Value, out var showBitsPerSample) && showBitsPerSample)
+                ShowBitsPerSample = true;
+            if (bool.TryParse(settings["ShowChannels"].Value, out var showChannels) && showChannels)
+                ShowChannels = true;
+            if (bool.TryParse(settings["ShowFormat"].Value, out var showFormat) && showFormat)
+                ShowFormat = true;
+            if (bool.TryParse(settings["ShowFrameCount"].Value, out var showFrameCount) && showFrameCount)
+                ShowFrameCount = true;
+            if (bool.TryParse(settings["ShowPlayLength"].Value, out var showPlayLength) && showPlayLength)
+                ShowPlayLength = true;
+            if (bool.TryParse(settings["ShowSampleRate"].Value, out var showSampleRate) && showSampleRate)
+                ShowSampleRate = true;
 
             audioFilesCollection.CollectionChanged += (sender, e) =>
             {
@@ -340,17 +698,27 @@ namespace AudioWorks.UI.ViewModels
                 AudioFiles.GroupDescriptions.Add(groupDescription);
         }
 
+        void SaveSetting(string key, string value)
+        {
+            var settings = _configuration.AppSettings.Settings;
+            if (settings[key] == null)
+                settings.Add(key, value);
+            else if (!settings[key].Value.Equals(value, StringComparison.OrdinalIgnoreCase))
+            {
+                settings[key].Value = value;
+                _configuration.Save(ConfigurationSaveMode.Minimal);
+                ConfigurationManager.RefreshSection(_configuration.AppSettings.SectionInformation.Name);
+            }
+        }
+
+        void SaveSetting(string key, bool value) => SaveSetting(key, value.ToString());
+
         void Metadata_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             RevertSelectionCommand.RaiseCanExecuteChanged();
             RevertModifiedCommand.RaiseCanExecuteChanged();
             SaveModifiedCommand.RaiseCanExecuteChanged();
         }
-
-        static IEnumerable<string> GetFilesRecursively(string directoryPath) =>
-            string.IsNullOrEmpty(directoryPath)
-                ? Enumerable.Empty<string>()
-                : Directory.EnumerateFiles(directoryPath, "*.*", SearchOption.AllDirectories);
 
         async Task AddFilesAsync(IEnumerable<string> filePaths) =>
             await Task.Run(() =>
@@ -365,5 +733,25 @@ namespace AudioWorks.UI.ViewModels
                     .Select(file => new AudioFileViewModel(new TaggedAudioFile(file))))
                     audioFileCollection.Add(newFile);
             });
+
+        static Configuration InitializeConfiguration()
+        {
+            var defaultConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var userConfigFile = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "AudioWorks", "UI", "Settings", "App.config");
+
+            if (!File.Exists(userConfigFile))
+                defaultConfiguration.SaveAs(userConfigFile);
+
+            return ConfigurationManager.OpenMappedExeConfiguration(
+                new ExeConfigurationFileMap { ExeConfigFilename = userConfigFile },
+                ConfigurationUserLevel.None);
+        }
+
+        static IEnumerable<string> GetFilesRecursively(string directoryPath) =>
+            string.IsNullOrEmpty(directoryPath)
+                ? Enumerable.Empty<string>()
+                : Directory.EnumerateFiles(directoryPath, "*.*", SearchOption.AllDirectories);
     }
 }
