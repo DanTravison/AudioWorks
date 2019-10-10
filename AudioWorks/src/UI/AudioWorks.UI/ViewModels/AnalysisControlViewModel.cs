@@ -120,6 +120,6 @@ namespace AudioWorks.UI.ViewModels
                 _cancellationSource.Cancel();
         }
 
-        public event Action<IDialogResult> RequestClose;
+        public event Action<IDialogResult>? RequestClose;
     }
 }

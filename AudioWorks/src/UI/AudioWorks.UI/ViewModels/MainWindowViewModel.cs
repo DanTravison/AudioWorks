@@ -505,6 +505,8 @@ namespace AudioWorks.UI.ViewModels
                 if (e.NewItems != null)
                     foreach (var newItem in e.NewItems)
                     {
+                        if (newItem == null) continue;
+
                         ((AudioFileViewModel) newItem).Metadata.PropertyChanged += Metadata_PropertyChanged;
                         SaveAllCommand.RaiseCanExecuteChanged();
                     }
@@ -512,6 +514,8 @@ namespace AudioWorks.UI.ViewModels
                 if (e.OldItems != null)
                     foreach (var oldItem in e.OldItems)
                     {
+                        if (oldItem == null) continue;
+
                         ((AudioFileViewModel) oldItem).Metadata.PropertyChanged -= Metadata_PropertyChanged;
                         RevertModifiedCommand.RaiseCanExecuteChanged();
                         SaveModifiedCommand.RaiseCanExecuteChanged();
