@@ -32,22 +32,22 @@ namespace AudioWorks.Api.Tests.DataSources
 #if LINUX
                 new TestAudioMetadata
                 {
-                    TrackPeak = "0.976563",
-                    AlbumPeak = "0.976563",
+                    TrackPeak = "0.976562",
+                    AlbumPeak = "0.976562",
                     TrackGain = "-8.84",
                     AlbumGain = "-8.84"
                 },
                 new TestAudioMetadata
                 {
-                    TrackPeak = "0.976563",
-                    AlbumPeak = "0.976563",
+                    TrackPeak = "0.976562",
+                    AlbumPeak = "0.976562",
                     TrackGain = "-8.84",
                     AlbumGain = "-8.84"
                 }
 #else
                 new TestAudioMetadata
                 {
-#if NET471
+#if NETFRAMEWORK
                     TrackPeak = "0.976563",
                     AlbumPeak = "0.976563",
 #else
