@@ -14,22 +14,20 @@ You should have received a copy of the GNU Affero General Public License along w
 <https://www.gnu.org/licenses/>. */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using AudioWorks.Common.Tests.DataSources;
 using AudioWorks.Common;
-using JetBrains.Annotations;
+using AudioWorks.TestUtilities;
 using Xunit;
 
 namespace AudioWorks.Commands.Tests
 {
-    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
     public sealed class GetAudioCoverArtTests : IClassFixture<ModuleFixture>
     {
-        [NotNull] readonly ModuleFixture _moduleFixture;
+        readonly ModuleFixture _moduleFixture;
 
-        public GetAudioCoverArtTests([NotNull] ModuleFixture moduleFixture) => _moduleFixture = moduleFixture;
+        public GetAudioCoverArtTests(ModuleFixture moduleFixture) => _moduleFixture = moduleFixture;
 
         [Fact(DisplayName = "Get-AudioCoverArt command exists")]
         public void CommandExists()
@@ -159,17 +157,13 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Get-AudioCoverArt returns a CoverArt")]
         [MemberData(nameof(ValidImageFileDataSource.FileNames), MemberType = typeof(ValidImageFileDataSource))]
-        public void ReturnsCoverArt([NotNull] string fileName)
+        public void ReturnsCoverArt(string fileName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Get-AudioCoverArt")
-                    .AddArgument(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Valid",
-                        fileName));
+                    .AddArgument(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName));
 
                 Assert.IsAssignableFrom<CoverArt>(ps.Invoke()[0].BaseObject);
             }
@@ -177,17 +171,13 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Get-AudioCoverArt returns an error if the Path is an unsupported file")]
         [MemberData(nameof(UnsupportedImageFileDataSource.Data), MemberType = typeof(UnsupportedImageFileDataSource))]
-        public void PathUnsupportedReturnsError([NotNull] string fileName)
+        public void PathUnsupportedReturnsError(string fileName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Get-AudioCoverArt")
-                    .AddArgument(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Unsupported",
-                        fileName));
+                    .AddArgument(Path.Combine(PathUtility.GetTestFileRoot(), "Unsupported", fileName));
 
                 ps.Invoke();
 
@@ -202,17 +192,13 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Get-AudioCoverArt returns an error if the Path is an invalid file")]
         [MemberData(nameof(InvalidImageFileDataSource.Data), MemberType = typeof(InvalidImageFileDataSource))]
-        public void PathInvalidReturnsError([NotNull] string fileName)
+        public void PathInvalidReturnsError(string fileName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Get-AudioCoverArt")
-                    .AddArgument(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Invalid",
-                        fileName));
+                    .AddArgument(Path.Combine(PathUtility.GetTestFileRoot(), "Invalid", fileName));
 
                 ps.Invoke();
 

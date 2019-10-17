@@ -1,4 +1,4 @@
-﻿/* Copyright © 2018 Jeremy Herbison
+﻿/* Copyright © 2019 Jeremy Herbison
 
 This file is part of AudioWorks.
 
@@ -13,17 +13,19 @@ details.
 You should have received a copy of the GNU Affero General Public License along with AudioWorks. If not, see
 <https://www.gnu.org/licenses/>. */
 
-using System;
+using System.IO;
 
-namespace AudioWorks.Extensions.Flac
+namespace AudioWorks.TestUtilities
 {
-    abstract class MetadataBlock : IDisposable
+    public static class PathUtility
     {
-        internal MetadataBlockHandle Handle { get; }
+        public static string GetTestFileRoot()
+        {
+            var rootDirectory = new DirectoryInfo(
+                Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName;
+            if (rootDirectory == null) throw new DirectoryNotFoundException("Unable to locate the test file root directory.");
 
-        protected MetadataBlock(MetadataType metadataType) =>
-            Handle = SafeNativeMethods.MetadataObjectNew(metadataType);
-
-        public void Dispose() => Handle.Dispose();
+            return Path.Combine(rootDirectory, "TestFiles");
+        }
     }
 }

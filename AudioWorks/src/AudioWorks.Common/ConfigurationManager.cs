@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 
 namespace AudioWorks.Common
@@ -25,7 +24,6 @@ namespace AudioWorks.Common
     /// <summary>
     /// Manages the retrieval of configuration settings from disk.
     /// </summary>
-    [PublicAPI]
     public static class ConfigurationManager
     {
         const string _currentRepository = "https://www.myget.org/F/audioworks-extensions-v4/api/v3/index.json";
@@ -42,7 +40,6 @@ namespace AudioWorks.Common
         /// Gets the configuration.
         /// </summary>
         /// <value>The configuration.</value>
-        [NotNull]
         [CLSCompliant(false)]
         public static IConfigurationRoot Configuration { get; }
 
@@ -64,7 +61,6 @@ namespace AudioWorks.Common
                 Directory.CreateDirectory(settingsPath);
                 File.Copy(
                     Path.Combine(
-                        // ReSharper disable once AssignNullToNotNullAttribute
                         Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath),
                         settingsFileName),
                     settingsFile);
@@ -76,7 +72,7 @@ namespace AudioWorks.Common
                 .Build();
         }
 
-        static void MigrateToRoamingProfile([NotNull] string settingsFile)
+        static void MigrateToRoamingProfile(string settingsFile)
         {
             var oldSettingsFile = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -88,7 +84,7 @@ namespace AudioWorks.Common
             File.Delete(oldSettingsFile);
         }
 
-        static void UpgradeRepositoryUrl([NotNull] string settingsFile)
+        static void UpgradeRepositoryUrl(string settingsFile)
         {
             var settings = File.ReadAllText(settingsFile);
             foreach (var oldRepository in _oldRepositories)

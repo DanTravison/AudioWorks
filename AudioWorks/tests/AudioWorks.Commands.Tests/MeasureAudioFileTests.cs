@@ -14,7 +14,6 @@ You should have received a copy of the GNU Affero General Public License along w
 <https://www.gnu.org/licenses/>. */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
@@ -25,19 +24,18 @@ using AudioWorks.TestUtilities;
 using AudioWorks.Api.Tests.DataSources;
 using AudioWorks.Api.Tests.DataTypes;
 using AudioWorks.Common;
-using JetBrains.Annotations;
+using AudioWorks.TestUtilities;
 using Moq;
 using ObjectsComparer;
 using Xunit;
 
 namespace AudioWorks.Commands.Tests
 {
-    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
     public sealed class MeasureAudioFileTests : IClassFixture<ModuleFixture>
     {
-        [NotNull] readonly ModuleFixture _moduleFixture;
+        readonly ModuleFixture _moduleFixture;
 
-        public MeasureAudioFileTests([NotNull] ModuleFixture moduleFixture) => _moduleFixture = moduleFixture;
+        public MeasureAudioFileTests(ModuleFixture moduleFixture) => _moduleFixture = moduleFixture;
 
         [Fact(DisplayName = "Measure-AudioFile command exists")]
         public void CommandExists()
@@ -91,20 +89,15 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Measure-AudioFile accepts an Analyzer parameter")]
         [MemberData(nameof(AnalyzeValidFileDataSource.FileNamesAndAnalyzers), MemberType = typeof(AnalyzeValidFileDataSource))]
-        public void AcceptsAnalyzerParameter(
-            [NotNull] string fileName,
-            [NotNull] string analyzerName)
+        public void AcceptsAnalyzerParameter(string fileName, string analyzerName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Measure-AudioFile")
                     .AddParameter("Analyzer", analyzerName)
-                    .AddParameter("AudioFile", new TaggedAudioFile(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Valid",
-                        fileName)));
+                    .AddParameter("AudioFile",
+                        new TaggedAudioFile(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName)));
 
                 ps.Invoke();
 
@@ -114,20 +107,15 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Measure-AudioFile accepts the Analyzer parameter as the first argument")]
         [MemberData(nameof(AnalyzeValidFileDataSource.FileNamesAndAnalyzers), MemberType = typeof(AnalyzeValidFileDataSource))]
-        public void AcceptsAnalyzerParameterAsFirstArgument(
-            [NotNull] string fileName,
-            [NotNull] string analyzerName)
+        public void AcceptsAnalyzerParameterAsFirstArgument(string fileName, string analyzerName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Measure-AudioFile")
                     .AddArgument(analyzerName)
-                    .AddParameter("AudioFile", new TaggedAudioFile(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Valid",
-                        fileName)));
+                    .AddParameter("AudioFile",
+                        new TaggedAudioFile(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName)));
 
                 ps.Invoke();
 
@@ -137,20 +125,15 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Measure-AudioFile accepts an AudioFile parameter")]
         [MemberData(nameof(AnalyzeValidFileDataSource.FileNamesAndAnalyzers), MemberType = typeof(AnalyzeValidFileDataSource))]
-        public void AcceptsAudioFileParameter(
-            [NotNull] string fileName,
-            [NotNull] string analyzerName)
+        public void AcceptsAudioFileParameter(string fileName, string analyzerName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Measure-AudioFile")
                     .AddParameter("Analyzer", analyzerName)
-                    .AddParameter("AudioFile", new TaggedAudioFile(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Valid",
-                        fileName)));
+                    .AddParameter("AudioFile",
+                        new TaggedAudioFile(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName)));
 
                 ps.Invoke();
 
@@ -160,7 +143,7 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Measure-AudioFile requires the AudioFile parameter")]
         [MemberData(nameof(AnalyzeValidFileDataSource.Analyzers), MemberType = typeof(AnalyzeValidFileDataSource))]
-        public void RequiresAudioFileParameter([NotNull] string analyzer)
+        public void RequiresAudioFileParameter(string analyzer)
         {
             using (var ps = PowerShell.Create())
             {
@@ -174,20 +157,14 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Measure-AudioFile accepts the AudioFile parameter as the second argument")]
         [MemberData(nameof(AnalyzeValidFileDataSource.FileNamesAndAnalyzers), MemberType = typeof(AnalyzeValidFileDataSource))]
-        public void AcceptsAudioFileParameterAsSecondArgument(
-            [NotNull] string fileName,
-            [NotNull] string analyzerName)
+        public void AcceptsAudioFileParameterAsSecondArgument(string fileName, string analyzerName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Measure-AudioFile")
                     .AddArgument(analyzerName)
-                    .AddArgument(new TaggedAudioFile(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Valid",
-                        fileName)));
+                    .AddArgument(new TaggedAudioFile(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName)));
 
                 ps.Invoke();
 
@@ -197,20 +174,14 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Measure-AudioFile accepts the AudioFile parameter from the pipeline")]
         [MemberData(nameof(AnalyzeValidFileDataSource.FileNamesAndAnalyzers), MemberType = typeof(AnalyzeValidFileDataSource))]
-        public void AcceptsAudioFileParameterFromPipeline(
-            [NotNull] string fileName,
-            [NotNull] string analyzerName)
+        public void AcceptsAudioFileParameterFromPipeline(string fileName, string analyzerName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Set-Variable")
                     .AddArgument("audioFile")
-                    .AddArgument(new TaggedAudioFile(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Valid",
-                        fileName)))
+                    .AddArgument(new TaggedAudioFile(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName)))
                     .AddParameter("PassThru");
                 ps.AddCommand("Select-Object")
                     .AddParameter("ExpandProperty", "Value");
@@ -230,20 +201,15 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Measure-AudioFile accepts a PassThru switch")]
         [MemberData(nameof(AnalyzeValidFileDataSource.FileNamesAndAnalyzers), MemberType = typeof(AnalyzeValidFileDataSource))]
-        public void AcceptsPassThruSwitch(
-            [NotNull] string fileName,
-            [NotNull] string analyzerName)
+        public void AcceptsPassThruSwitch(string fileName, string analyzerName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Measure-AudioFile")
                     .AddParameter("Analyzer", analyzerName)
-                    .AddParameter("AudioFile", new TaggedAudioFile(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Valid",
-                        fileName)))
+                    .AddParameter("AudioFile",
+                        new TaggedAudioFile(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName)))
                     .AddParameter("PassThru");
 
                 ps.Invoke();
@@ -254,15 +220,9 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Measure-AudioFile with PassThru switch returns the AudioFile")]
         [MemberData(nameof(AnalyzeValidFileDataSource.FileNamesAndAnalyzers), MemberType = typeof(AnalyzeValidFileDataSource))]
-        public void PassThruSwitchReturnsAudioFile(
-            [NotNull] string fileName,
-            [NotNull] string analyzerName)
+        public void PassThruSwitchReturnsAudioFile(string fileName, string analyzerName)
         {
-            var audioFile = new TaggedAudioFile(Path.Combine(
-                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                "TestFiles",
-                "Valid",
-                fileName));
+            var audioFile = new TaggedAudioFile(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName));
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
@@ -278,21 +238,17 @@ namespace AudioWorks.Commands.Tests
         [Theory(DisplayName = "Measure-AudioFile creates the expected metadata")]
         [MemberData(nameof(AnalyzeValidFileDataSource.Data), MemberType = typeof(AnalyzeValidFileDataSource))]
         public void CreatesExpectedMetadata(
-            [NotNull] string fileName,
-            [NotNull] string analyzerName,
-            [CanBeNull] TestSettingDictionary settings,
+            string fileName,
+            string analyzerName,
+            TestSettingDictionary settings,
 #if LINUX
-            [NotNull] TestAudioMetadata expectedUbuntu1604Metadata,
-            [NotNull] TestAudioMetadata expectedUbuntu1804Metadata)
+            TestAudioMetadata expectedUbuntu1604Metadata,
+            TestAudioMetadata expectedUbuntu1804Metadata)
 #else
-            [NotNull] TestAudioMetadata expectedMetadata)
+            TestAudioMetadata expectedMetadata)
 #endif
         {
-            var audioFile = new TaggedAudioFile(Path.Combine(
-                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                "TestFiles",
-                "Valid",
-                fileName));
+            var audioFile = new TaggedAudioFile(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName));
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
@@ -327,21 +283,18 @@ namespace AudioWorks.Commands.Tests
         [Theory(DisplayName = "Measure-AudioFile creates the expected metadata for a group")]
         [MemberData(nameof(AnalyzeGroupDataSource.Data), MemberType = typeof(AnalyzeGroupDataSource))]
         public void CreatesExpectedMetadataForGroup(
-            [NotNull] string[] fileNames,
-            [NotNull] string analyzerName,
-            [CanBeNull] TestSettingDictionary settings,
+            string[] fileNames,
+            string analyzerName,
+            TestSettingDictionary settings,
 #if LINUX
-            [NotNull] TestAudioMetadata[] expectedUbuntu1604Metadata,
-            [NotNull] TestAudioMetadata[] expectedUbuntu1804Metadata)
+            TestAudioMetadata[] expectedUbuntu1604Metadata,
+            TestAudioMetadata[] expectedUbuntu1804Metadata)
 #else
-            [NotNull] TestAudioMetadata[] expectedMetadata)
+            TestAudioMetadata[] expectedMetadata)
 #endif
         {
-            var audioFiles = fileNames.Select(fileName => new TaggedAudioFile(Path.Combine(
-                    new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                    "TestFiles",
-                    "Valid",
-                    fileName)))
+            var audioFiles = fileNames.Select(fileName =>
+                    new TaggedAudioFile(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName)))
                 .ToArray<ITaggedAudioFile>();
             using (var ps = PowerShell.Create())
             {
@@ -354,15 +307,14 @@ namespace AudioWorks.Commands.Tests
                     .AddParameter("ExpandProperty", "Value");
                 ps.AddCommand("Measure-AudioFile")
                     .AddArgument(analyzerName);
-                if (settings != null)
-                    foreach (var item in settings)
-                        if (item.Value is bool boolValue)
-                        {
-                            if (boolValue)
-                                ps.AddParameter(item.Key);
-                        }
-                        else
-                            ps.AddParameter(item.Key, item.Value);
+                foreach (var item in settings)
+                    if (item.Value is bool boolValue)
+                    {
+                        if (boolValue)
+                            ps.AddParameter(item.Key);
+                    }
+                    else
+                        ps.AddParameter(item.Key, item.Value);
 
                 ps.Invoke();
             }

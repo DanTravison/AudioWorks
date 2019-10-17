@@ -2,8 +2,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1;netstandard2.0</TargetFrameworks>
-    <LangVersion>7.3</LangVersion>
+    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
     <Version>1.0.0-beta5</Version>
     <Revision>$(BUILD_BUILDID)</Revision>
     <Revision Condition="'$(Revision)'==''">0</Revision>
@@ -16,7 +17,7 @@
     <Copyright>© 2018 Jeremy Herbison</Copyright>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/jherby2k/AudioWorks</PackageProjectUrl>
-    <PackageIconUrl>https://github.com/jherby2k/AudioWorks/raw/master/AudioWorks/src/AudioWorks.Api/Icon.png</PackageIconUrl>
+    <PackageIcon>Icon.png</PackageIcon>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageTags>music encode decode convert export tag cover art FLAC MP3 ID3 Lame MP4 AAC Apple ALAC Ogg Vorbis Opus ReplayGain EBUR128</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
@@ -30,6 +31,14 @@
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\AudioWorks.Api.xml</DocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Icon.png">
+      <PackagePath>\</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AudioWorks.Extensibility" Version="1.0.0-beta5" />

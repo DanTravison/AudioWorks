@@ -19,7 +19,6 @@ using System.Globalization;
 using System.IO;
 using AudioWorks.Common;
 using AudioWorks.Extensibility;
-using JetBrains.Annotations;
 
 namespace AudioWorks.Extensions.Opus
 {
@@ -28,8 +27,8 @@ namespace AudioWorks.Extensions.Opus
     [AudioEncoderExport("Opus", "Opus")]
     sealed class OpusAudioEncoder : IAudioEncoder, IDisposable
     {
-        [CanBeNull] MetadataToOpusCommentAdapter _comments;
-        [CanBeNull] Encoder _encoder;
+        MetadataToOpusCommentAdapter? _comments;
+        Encoder? _encoder;
 
         public SettingInfoDictionary SettingInfo => new SettingInfoDictionary
         {
@@ -45,9 +44,9 @@ namespace AudioWorks.Extensions.Opus
         public void Initialize(Stream stream, AudioInfo info, AudioMetadata metadata, SettingDictionary settings)
         {
             var gain = 0;
-            if (settings.TryGetValue("ApplyGain", out string applyGain))
+            if (settings.TryGetValue("ApplyGain", out string? applyGain))
             {
-                var scale = applyGain.Equals("Track", StringComparison.OrdinalIgnoreCase)
+                var scale = applyGain!.Equals("Track", StringComparison.OrdinalIgnoreCase)
                     ? CalculateScale(metadata.TrackGain, metadata.TrackPeak)
                     : CalculateScale(metadata.AlbumGain, metadata.AlbumPeak);
 
@@ -72,7 +71,7 @@ namespace AudioWorks.Extensions.Opus
             _encoder.SetSerialNumber(serialNumber);
 
             // Default to full VBR
-            if (settings.TryGetValue("ControlMode", out string vbrMode))
+            if (settings.TryGetValue("ControlMode", out string? vbrMode))
                 // ReSharper disable once SwitchStatementMissingSomeCases
                 switch (vbrMode)
                 {
@@ -92,8 +91,8 @@ namespace AudioWorks.Extensions.Opus
             if (settings.TryGetValue("BitRate", out int bitRate))
                 _encoder.SetBitRate(bitRate);
 
-            if (settings.TryGetValue("SignalType", out string signalType))
-                _encoder.SetSignal(signalType.Equals("Speech", StringComparison.OrdinalIgnoreCase)
+            if (settings.TryGetValue("SignalType", out string? signalType))
+                _encoder.SetSignal(signalType!.Equals("Speech", StringComparison.OrdinalIgnoreCase)
                     ? SignalType.Speech
                     : SignalType.Music);
             else
@@ -107,12 +106,10 @@ namespace AudioWorks.Extensions.Opus
             Span<float> buffer = stackalloc float[samples.Channels * samples.Frames];
             samples.CopyToInterleaved(buffer);
 
-            // ReSharper disable once PossibleNullReferenceException
-            _encoder.Write(buffer);
+            _encoder!.Write(buffer);
         }
 
-        // ReSharper disable once PossibleNullReferenceException
-        public void Finish() => _encoder.Drain();
+        public void Finish() => _encoder!.Drain();
 
         public void Dispose()
         {
@@ -120,16 +117,14 @@ namespace AudioWorks.Extensions.Opus
             _comments?.Dispose();
         }
 
-        [Pure]
-        static float CalculateScale([CanBeNull] string gain, [CanBeNull] string peak) =>
+        static float CalculateScale(string? gain, string? peak) =>
             string.IsNullOrEmpty(gain) || string.IsNullOrEmpty(peak)
                 ? 1
                 : Math.Min(
                     (float) Math.Pow(10, (float.Parse(gain, CultureInfo.InvariantCulture) - 5) / 20),
                     1 / float.Parse(peak, CultureInfo.InvariantCulture));
 
-        [Pure, ContractAnnotation("gain:null => null; gain:notnull => notnull")]
-        static string CalculateGain([CanBeNull] string gain, float scale) =>
+        static string CalculateGain(string? gain, float scale) =>
             string.IsNullOrEmpty(gain)
                 ? string.Empty
                 : string.Format(CultureInfo.InvariantCulture, "{0:0.00}",

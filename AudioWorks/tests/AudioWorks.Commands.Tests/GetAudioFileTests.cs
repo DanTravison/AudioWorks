@@ -14,22 +14,20 @@ You should have received a copy of the GNU Affero General Public License along w
 <https://www.gnu.org/licenses/>. */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using AudioWorks.Api.Tests.DataSources;
 using AudioWorks.Common;
-using JetBrains.Annotations;
+using AudioWorks.TestUtilities;
 using Xunit;
 
 namespace AudioWorks.Commands.Tests
 {
-    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
     public sealed class GetAudioFileTests : IClassFixture<ModuleFixture>
     {
-        [NotNull] readonly ModuleFixture _moduleFixture;
+        readonly ModuleFixture _moduleFixture;
 
-        public GetAudioFileTests([NotNull] ModuleFixture moduleFixture) => _moduleFixture = moduleFixture;
+        public GetAudioFileTests(ModuleFixture moduleFixture) => _moduleFixture = moduleFixture;
 
         [Fact(DisplayName = "Get-AudioFile command exists")]
         public void CommandExists()
@@ -159,17 +157,13 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Get-AudioFile returns an error if the Path is an unsupported file")]
         [MemberData(nameof(UnsupportedFileDataSource.Data), MemberType = typeof(UnsupportedFileDataSource))]
-        public void PathUnsupportedReturnsError([NotNull] string fileName)
+        public void PathUnsupportedReturnsError(string fileName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Get-AudioFile")
-                    .AddArgument(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Unsupported",
-                        fileName));
+                    .AddArgument(Path.Combine(PathUtility.GetTestFileRoot(), "Unsupported", fileName));
 
                 ps.Invoke();
 
@@ -184,17 +178,13 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Get-AudioFile returns an error if the Path is an invalid file")]
         [MemberData(nameof(InvalidFileDataSource.Data), MemberType = typeof(InvalidFileDataSource))]
-        public void PathInvalidReturnsError([NotNull] string fileName)
+        public void PathInvalidReturnsError(string fileName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Get-AudioFile")
-                    .AddArgument(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Invalid",
-                        fileName));
+                    .AddArgument(Path.Combine(PathUtility.GetTestFileRoot(), "Invalid", fileName));
 
                 ps.Invoke();
 
@@ -209,17 +199,13 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Get-AudioFile returns an ITaggedAudioFile")]
         [MemberData(nameof(ValidFileDataSource.FileNames), MemberType = typeof(ValidFileDataSource))]
-        public void ReturnsITaggedAudioFile([NotNull] string fileName)
+        public void ReturnsITaggedAudioFile(string fileName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Get-AudioFile")
-                    .AddArgument(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Valid",
-                        fileName));
+                    .AddArgument(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName));
 
                 Assert.IsAssignableFrom<ITaggedAudioFile>(ps.Invoke()[0].BaseObject);
             }
@@ -227,16 +213,13 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Get-AudioFile returns an ITaggedAudioFile using a relative path")]
         [MemberData(nameof(ValidFileDataSource.FileNames), MemberType = typeof(ValidFileDataSource))]
-        public void RelativePathReturnsITaggedAudioFile([NotNull] string fileName)
+        public void RelativePathReturnsITaggedAudioFile(string fileName)
         {
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Push-Location")
-                    .AddArgument(Path.Combine(
-                        new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                        "TestFiles",
-                        "Valid"));
+                    .AddArgument(Path.Combine(PathUtility.GetTestFileRoot(), "Valid"));
                 ps.AddStatement();
                 ps.AddCommand("Get-AudioFile")
                     .AddArgument(fileName);
