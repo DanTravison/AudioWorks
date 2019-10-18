@@ -17,13 +17,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AudioWorks.Api.Tests.DataTypes;
-using JetBrains.Annotations;
 
 namespace AudioWorks.Api.Tests.DataSources
 {
     public static class SaveMetadataValidFileSource
     {
-        [NotNull, ItemNotNull] static readonly List<object[]> _data = new List<object[]>
+        static readonly List<object[]> _data = new List<object[]>
         {
             #region FLAC
 
@@ -50,8 +49,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "4707C81E467497975458C152234AD13F",
                 "79528DB2721970437C6D8877F655E273"
@@ -84,8 +83,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "8233F3397D5097D50A061504D10AA644",
                 "B903A8E9B17014CDDB563A3CC73AB7F5"
@@ -118,8 +117,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "8233F3397D5097D50A061504D10AA644",
                 "B903A8E9B17014CDDB563A3CC73AB7F5"
@@ -152,8 +151,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "5449B08E4A9CEB9D86B3BEA443F02662",
                 "C830D5913F20AEF93853E1A01462708D"
@@ -186,8 +185,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "34B8ED1508B895CE54E48035C2F8F459",
                 "27C19A7309E49A5B07C0AD932A7B2875"
@@ -221,8 +220,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "4707C81E467497975458C152234AD13F",
                 "79528DB2721970437C6D8877F655E273"
@@ -256,7 +255,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["Padding"] = 0
@@ -294,7 +293,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["Padding"] = 100
@@ -314,8 +313,8 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "FLAC Level 5 16-bit 44100Hz Stereo (Tagged using defaults).flac",
                 new TestAudioMetadata(),
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "D858D62481CDF540B881F2151C0ABB80",
                 "3983A342A074A7E8871FEF4FBE0AC73F"
@@ -331,8 +330,8 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "FLAC Level 5 16-bit 44100Hz Stereo.flac",
                 new TestAudioMetadata(),
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "D858D62481CDF540B881F2151C0ABB80",
                 "3983A342A074A7E8871FEF4FBE0AC73F"
@@ -349,7 +348,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "FLAC Level 5 16-bit 44100Hz Stereo.flac",
                 new TestAudioMetadata(),
                 "PNG 24-bit 1280 x 935.png",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "86C7A296259858EC6063A3B0740D18CB",
                 "8E3D1A13C4F9BE314C0AD61892472AC6"
@@ -366,7 +365,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "FLAC Level 5 16-bit 44100Hz Stereo.flac",
                 new TestAudioMetadata(),
                 "JPEG 24-bit 1280 x 935.jpg",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "CB279829CACD8B102E3288CA3360BC52",
                 "F489D849B9ACD653B8986D45C487742E"
@@ -404,8 +403,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "7F7316891B26F9FC3DE7D2D1304F9CFE",
                 "7F7316891B26F9FC3DE7D2D1304F9CFE"
@@ -436,8 +435,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "9957A905E53C3D2411A3A4BF3DA4DBA3",
                 "9957A905E53C3D2411A3A4BF3DA4DBA3"
@@ -468,8 +467,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "9957A905E53C3D2411A3A4BF3DA4DBA3",
                 "9957A905E53C3D2411A3A4BF3DA4DBA3"
@@ -500,8 +499,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "847E8C85293966F62132E8F851FA7BAE",
                 "847E8C85293966F62132E8F851FA7BAE"
@@ -532,8 +531,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "BD8C422B4F08A50532168922680B0C2E",
                 "BD8C422B4F08A50532168922680B0C2E"
@@ -565,8 +564,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "7F7316891B26F9FC3DE7D2D1304F9CFE",
                 "7F7316891B26F9FC3DE7D2D1304F9CFE"
@@ -580,7 +579,7 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "ALAC 16-bit 44100Hz Stereo.m4a",
                 new TestAudioMetadata(),
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["CreationTime"] = new DateTime(2018, 9, 1)
@@ -598,7 +597,7 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "ALAC 16-bit 44100Hz Stereo.m4a",
                 new TestAudioMetadata(),
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["ModificationTime"] = new DateTime(2018, 9, 1)
@@ -616,8 +615,8 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "ALAC 16-bit 44100Hz Stereo (Tagged).m4a",
                 new TestAudioMetadata(),
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "090FD975097BAFC4164370A3DEA9E696",
                 "090FD975097BAFC4164370A3DEA9E696"
@@ -631,8 +630,8 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "ALAC 16-bit 44100Hz Stereo.m4a",
                 new TestAudioMetadata(),
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "090FD975097BAFC4164370A3DEA9E696",
                 "090FD975097BAFC4164370A3DEA9E696"
@@ -646,7 +645,7 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "ALAC 16-bit 44100Hz Stereo.m4a",
                 new TestAudioMetadata(),
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["Padding"] = 2048
@@ -664,7 +663,7 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "ALAC 16-bit 44100Hz Stereo.m4a",
                 new TestAudioMetadata(),
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["Padding"] = 0
@@ -682,7 +681,7 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "ALAC 16-bit 44100Hz Stereo.m4a",
                 new TestAudioMetadata(),
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["Padding"] = 16_777_216
@@ -701,7 +700,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "ALAC 16-bit 44100Hz Stereo.m4a",
                 new TestAudioMetadata(),
                 "PNG 24-bit 1280 x 935.png",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "767F47AEEA8A8F85DA214D51E0751CD5",
                 "767F47AEEA8A8F85DA214D51E0751CD5"
@@ -716,7 +715,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "ALAC 16-bit 44100Hz Stereo.m4a",
                 new TestAudioMetadata(),
                 "JPEG 24-bit 1280 x 935.jpg",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "D419908A6F39E2D402BFDE1CB4DA8821",
                 "D419908A6F39E2D402BFDE1CB4DA8821"
@@ -731,7 +730,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "QAAC TVBR 91 44100Hz Stereo.m4a",
                 new TestAudioMetadata(),
                 "PNG 24-bit 1280 x 935.png",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "679251C0E61FC8EB10286525FE64F60F",
                 "679251C0E61FC8EB10286525FE64F60F"
@@ -746,7 +745,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "QAAC TVBR 91 44100Hz Stereo.m4a",
                 new TestAudioMetadata(),
                 "JPEG 24-bit 1280 x 935.jpg",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "679251C0E61FC8EB10286525FE64F60F",
                 "679251C0E61FC8EB10286525FE64F60F"
@@ -782,8 +781,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "D44FACB05A7F0CB3CB5F5A31B9B52022",
                 "D44FACB05A7F0CB3CB5F5A31B9B52022"
@@ -814,8 +813,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "C64330448267EA7595D19378766B38C5",
                 "C64330448267EA7595D19378766B38C5"
@@ -846,8 +845,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "C64330448267EA7595D19378766B38C5",
                 "C64330448267EA7595D19378766B38C5"
@@ -878,8 +877,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "8E71F084665F7763560EAEF79292B1ED",
                 "8E71F084665F7763560EAEF79292B1ED"
@@ -910,8 +909,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "B4BAD75711B480844A735B8EF169F82A",
                 "B4BAD75711B480844A735B8EF169F82A"
@@ -943,8 +942,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "076B838A43E883DCC9F0D0ABE8A263D6",
                 "076B838A43E883DCC9F0D0ABE8A263D6"
@@ -976,7 +975,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["TagVersion"] = "2.4"
@@ -1012,7 +1011,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["TagEncoding"] = "UTF16"
@@ -1048,7 +1047,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["TagPadding"] = 2048
@@ -1084,7 +1083,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["TagPadding"] = 0
@@ -1120,7 +1119,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
+                string.Empty,
                 new TestSettingDictionary
                 {
                     ["TagPadding"] = 16_777_216
@@ -1156,8 +1155,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "D44FACB05A7F0CB3CB5F5A31B9B52022",
                 "D44FACB05A7F0CB3CB5F5A31B9B52022"
@@ -1171,8 +1170,8 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "Lame CBR 128 44100Hz Stereo (ID3v2.3 Latin1).mp3",
                 new TestAudioMetadata(),
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "963D578D818C25DE5FEE6625BE7BFA98",
                 "963D578D818C25DE5FEE6625BE7BFA98"
@@ -1186,8 +1185,8 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "Lame CBR 128 44100Hz Stereo.mp3",
                 new TestAudioMetadata(),
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "963D578D818C25DE5FEE6625BE7BFA98",
                 "963D578D818C25DE5FEE6625BE7BFA98"
@@ -1202,7 +1201,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "Lame CBR 128 44100Hz Stereo.mp3",
                 new TestAudioMetadata(),
                 "PNG 24-bit 1280 x 935.png",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "1BF5C0A314A84C08A71E620ECFAC27FF",
                 "1BF5C0A314A84C08A71E620ECFAC27FF"
@@ -1217,7 +1216,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "Lame CBR 128 44100Hz Stereo.mp3",
                 new TestAudioMetadata(),
                 "JPEG 24-bit 1280 x 935.jpg",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "1BF5C0A314A84C08A71E620ECFAC27FF",
                 "1BF5C0A314A84C08A71E620ECFAC27FF"
@@ -1253,8 +1252,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "7DE488CE969207C50F33962EA5A9DDDE",
                 "7DE488CE969207C50F33962EA5A9DDDE"
@@ -1287,8 +1286,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "D9C7D27040EF2ECE830AE4FC9B5BF25E",
                 "D9C7D27040EF2ECE830AE4FC9B5BF25E"
@@ -1321,8 +1320,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "D9C7D27040EF2ECE830AE4FC9B5BF25E",
                 "D9C7D27040EF2ECE830AE4FC9B5BF25E"
@@ -1355,8 +1354,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "39B3BD086D3587C78FB2E76B52BD8F12",
                 "39B3BD086D3587C78FB2E76B52BD8F12"
@@ -1389,8 +1388,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "9E57B6A4089942A55ABD25FC13F7F749",
                 "9E57B6A4089942A55ABD25FC13F7F749"
@@ -1424,8 +1423,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackGain = "0.7",
                     AlbumGain = "0.8"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "7DE488CE969207C50F33962EA5A9DDDE",
                 "7DE488CE969207C50F33962EA5A9DDDE"
@@ -1441,8 +1440,8 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "Vorbis Quality 3 44100Hz Stereo (Tagged using defaults).ogg",
                 new TestAudioMetadata(),
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "46539B96ACD38AA00671E0D5F82E57B1",
                 "46539B96ACD38AA00671E0D5F82E57B1"
@@ -1458,8 +1457,8 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "Vorbis Quality 3 44100Hz Stereo.ogg",
                 new TestAudioMetadata(),
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "46539B96ACD38AA00671E0D5F82E57B1",
                 "46539B96ACD38AA00671E0D5F82E57B1"
@@ -1476,7 +1475,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "Vorbis Quality 3 44100Hz Stereo.ogg",
                 new TestAudioMetadata(),
                 "PNG 24-bit 1280 x 935.png",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "FD245B933B515151B8AF17307FF6ECFE",
                 "FD245B933B515151B8AF17307FF6ECFE"
@@ -1493,7 +1492,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "Vorbis Quality 3 44100Hz Stereo.ogg",
                 new TestAudioMetadata(),
                 "JPEG 24-bit 1280 x 935.jpg",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "FD245B933B515151B8AF17307FF6ECFE",
                 "FD245B933B515151B8AF17307FF6ECFE"
@@ -1527,8 +1526,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackNumber = "01",
                     TrackCount = "12"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "9A53EDE65A60F0C1684D16744E33DCFC",
                 "9A53EDE65A60F0C1684D16744E33DCFC"
@@ -1557,8 +1556,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackNumber = "01",
                     TrackCount = "12"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "4A397361C11EC1FE03A43E176E673856",
                 "4A397361C11EC1FE03A43E176E673856"
@@ -1587,8 +1586,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackNumber = "01",
                     TrackCount = "12"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "4A397361C11EC1FE03A43E176E673856",
                 "4A397361C11EC1FE03A43E176E673856"
@@ -1617,8 +1616,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     Year = "2017",
                     TrackCount = "12"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "666B7D0315E667A3D6A943294A32BE1F",
                 "666B7D0315E667A3D6A943294A32BE1F"
@@ -1647,8 +1646,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     Year = "2017",
                     TrackNumber = "01"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "910BF18671BC79D50FB8B9EAE8E4F0DA",
                 "910BF18671BC79D50FB8B9EAE8E4F0DA"
@@ -1678,8 +1677,8 @@ namespace AudioWorks.Api.Tests.DataSources
                     TrackNumber = "01",
                     TrackCount = "12"
                 },
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "86AD4DC307C9523B2C1213FE2359FDEA",
                 "86AD4DC307C9523B2C1213FE2359FDEA"
@@ -1695,8 +1694,8 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "Opus VBR 44100Hz Stereo (Tagged using defaults).opus",
                 new TestAudioMetadata(),
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "C2351EF6BFA1D50983183ADC6136FB9C",
                 "C2351EF6BFA1D50983183ADC6136FB9C"
@@ -1712,8 +1711,8 @@ namespace AudioWorks.Api.Tests.DataSources
             {
                 "Opus VBR 44100Hz Stereo.opus",
                 new TestAudioMetadata(),
-                null,
-                null,
+                string.Empty,
+                new TestSettingDictionary(),
 #if LINUX
                 "CEF9DD8611EBFEF035761B450D816E95",
                 "CEF9DD8611EBFEF035761B450D816E95"
@@ -1730,7 +1729,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "Opus VBR 44100Hz Stereo.opus",
                 new TestAudioMetadata(),
                 "PNG 24-bit 1280 x 935.png",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "1636B4EF09C4EF2B16135E9C2670473B",
                 "1636B4EF09C4EF2B16135E9C2670473B"
@@ -1747,7 +1746,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 "Opus VBR 44100Hz Stereo.opus",
                 new TestAudioMetadata(),
                 "JPEG 24-bit 1280 x 935.jpg",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 "1636B4EF09C4EF2B16135E9C2670473B",
                 "1636B4EF09C4EF2B16135E9C2670473B"
@@ -1761,11 +1760,6 @@ namespace AudioWorks.Api.Tests.DataSources
             #endregion
         };
 
-        [NotNull, ItemNotNull]
-        public static IEnumerable<object[]> Data
-        {
-            // Prepend an index to each row
-            [UsedImplicitly] get => _data.Select((item, index) => item.Prepend(index).ToArray());
-        }
+        public static IEnumerable<object[]> Data => _data.Select((item, index) => item.Prepend(index).ToArray());
     }
 }

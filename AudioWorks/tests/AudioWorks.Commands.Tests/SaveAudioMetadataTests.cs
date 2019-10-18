@@ -14,7 +14,6 @@ You should have received a copy of the GNU Affero General Public License along w
 <https://www.gnu.org/licenses/>. */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using AudioWorks.Api;
@@ -23,19 +22,17 @@ using AudioWorks.Api.Tests.DataTypes;
 using AudioWorks.Common;
 using AudioWorks.TestUtilities;
 using AutoMapper;
-using JetBrains.Annotations;
 using Moq;
 using Xunit;
 
 namespace AudioWorks.Commands.Tests
 {
-    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
     public sealed class SaveAudioMetadataTests : IClassFixture<ModuleFixture>
     {
-        [NotNull] readonly ModuleFixture _moduleFixture;
-        [NotNull] readonly IMapper _mapper;
+        readonly ModuleFixture _moduleFixture;
+        readonly IMapper _mapper;
 
-        public SaveAudioMetadataTests([NotNull] ModuleFixture moduleFixture)
+        public SaveAudioMetadataTests(ModuleFixture moduleFixture)
         {
             _moduleFixture = moduleFixture;
             _mapper = new MapperConfiguration(config => config.CreateMap<AudioMetadata, AudioMetadata>()).CreateMapper();
@@ -195,42 +192,38 @@ namespace AudioWorks.Commands.Tests
         [MemberData(nameof(SaveMetadataValidFileSource.Data), MemberType = typeof(SaveMetadataValidFileSource))]
         public void CreatesExpectedOutput(
             int index,
-            [NotNull] string fileName,
-            [NotNull] TestAudioMetadata metadata,
-            [CanBeNull] string imageFileName,
-            [CanBeNull] SettingDictionary settings,
+            string fileName,
+            TestAudioMetadata metadata,
+            string imageFileName,
+            SettingDictionary settings,
 #if LINUX
-            [NotNull] string expectedUbuntu1604Hash,
-            [NotNull] string expectedUbuntu1804Hash)
+            string expectedUbuntu1604Hash,
+            string expectedUbuntu1804Hash)
 #else
-            [NotNull] string expectedHash)
+            string expectedHash)
 #endif
         {
-            var sourceDirectory = Path.Combine(
-                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                "TestFiles",
-                "Valid");
+            var sourceDirectory = Path.Combine(PathUtility.GetTestFileRoot(), "Valid");
             var path = Path.Combine("Output", "Save-AudioMetadata", "Valid", $"{index:00} - {fileName}");
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             File.Copy(Path.Combine(sourceDirectory, fileName), path, true);
             var audioFile = new TaggedAudioFile(path);
             _mapper.Map(metadata, audioFile.Metadata);
-            if (imageFileName != null)
+            if (!string.IsNullOrEmpty(imageFileName))
                 audioFile.Metadata.CoverArt = CoverArtFactory.GetOrCreate(Path.Combine(sourceDirectory, imageFileName));
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;
                 ps.AddCommand("Save-AudioMetadata")
                     .AddArgument(audioFile);
-                if (settings != null)
-                    foreach (var item in settings)
-                        if (item.Value is bool boolValue)
-                        {
-                            if (boolValue)
-                                ps.AddParameter(item.Key);
-                        }
-                        else
-                            ps.AddParameter(item.Key, item.Value);
+                foreach (var item in settings)
+                    if (item.Value is bool boolValue)
+                    {
+                        if (boolValue)
+                            ps.AddParameter(item.Key);
+                    }
+                    else
+                        ps.AddParameter(item.Key, item.Value);
 
                 ps.Invoke();
             }
@@ -247,15 +240,11 @@ namespace AudioWorks.Commands.Tests
 
         [Theory(DisplayName = "Save-AudioMetadata method returns an error if the file is unsupported")]
         [MemberData(nameof(SaveMetadataUnsupportedFileDataSource.Data), MemberType = typeof(SaveMetadataUnsupportedFileDataSource))]
-        public void UnsupportedFileReturnsError(int index, [NotNull] string fileName)
+        public void UnsupportedFileReturnsError(int index, string fileName)
         {
             var path = Path.Combine("Output", "Save-AudioMetadata", "Unsupported", $"{index:00} - {fileName}");
             Directory.CreateDirectory(Path.GetDirectoryName(path));
-            File.Copy(Path.Combine(
-                new DirectoryInfo(Directory.GetCurrentDirectory()).Parent?.Parent?.Parent?.Parent?.FullName,
-                "TestFiles",
-                "Valid",
-                fileName), path, true);
+            File.Copy(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName), path, true);
             using (var ps = PowerShell.Create())
             {
                 ps.Runspace = _moduleFixture.Runspace;

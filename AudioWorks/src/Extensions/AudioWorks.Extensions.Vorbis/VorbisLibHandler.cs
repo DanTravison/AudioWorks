@@ -23,7 +23,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 using AudioWorks.Common;
 using AudioWorks.Extensibility;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 namespace AudioWorks.Extensions.Vorbis
@@ -37,7 +36,6 @@ namespace AudioWorks.Extensions.Vorbis
 
 #if WINDOWS
             var libPath = Path.Combine(
-                // ReSharper disable once AssignNullToNotNullAttribute
                 Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath),
                 Environment.Is64BitProcess ? "win-x64" : "win-x86");
 
@@ -55,17 +53,15 @@ namespace AudioWorks.Extensions.Vorbis
             var osVersion = GetOSVersion();
 
             AddUnmanagedLibraryPath(Path.Combine(
-                // ReSharper disable once AssignNullToNotNullAttribute
                 Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath),
-                osVersion.StartsWith("10.12", StringComparison.Ordinal) ? "osx.10.12-x64" :
                 osVersion.StartsWith("10.13", StringComparison.Ordinal) ? "osx.10.13-x64" :
-                "osx.10.14-x64"));
+                osVersion.StartsWith("10.14", StringComparison.Ordinal) ? "osx.10.14-x64" :
+                "osx.10.15-x64"));
 #else // LINUX
             var release = GetRelease();
 
             if (release.StartsWith("Ubuntu 16.04", StringComparison.OrdinalIgnoreCase))
                 AddUnmanagedLibraryPath(Path.Combine(
-                    // ReSharper disable once AssignNullToNotNullAttribute
                     Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath),
                     release.StartsWith("Ubuntu 16.04", StringComparison.OrdinalIgnoreCase)
                         ? "ubuntu.16.04-x64"
@@ -87,29 +83,47 @@ namespace AudioWorks.Extensions.Vorbis
             return true;
         }
 
-        static void AddUnmanagedLibraryPath([NotNull] string libPath) =>
+        static void AddUnmanagedLibraryPath(string libPath) =>
             ((ExtensionLoadContext)AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly()))
             .AddUnmanagedLibraryPath(libPath);
 #if LINUX
 
-        [NotNull]
+        static bool VerifyLibrary(string libraryName)
+        {
+            using (var process = new Process())
+            {
+                process.StartInfo = new ProcessStartInfo("locate", $"-r {libraryName}$")
+                {
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                process.Start();
+                process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                return process.ExitCode == 0;
+            }
+        }
+
         public static string GetRelease()
         {
             try
             {
-                var process = new Process
+                using (var process = new Process())
                 {
-                    StartInfo = new ProcessStartInfo("lsb_release", "-d -s")
+                    process.StartInfo = new ProcessStartInfo("lsb_release", "-d -s")
                     {
                         RedirectStandardOutput = true,
                         UseShellExecute = false,
                         CreateNoWindow = true
-                    }
-                };
-                process.Start();
-                var result = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-                return result.Trim();
+                    };
+
+                    process.Start();
+                    var result = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+                    return result.Trim();
+                }
             }
             catch (FileNotFoundException)
             {
@@ -117,43 +131,25 @@ namespace AudioWorks.Extensions.Vorbis
                 return string.Empty;
             }
         }
-
-        [Pure]
-        static bool VerifyLibrary([NotNull] string libraryName)
-        {
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo("locate", $"-r {libraryName}$")
-                {
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-            process.Start();
-            process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-            return process.ExitCode == 0;
-        }
 #endif
 #if OSX
 
-        [NotNull]
         public static string GetOSVersion()
         {
-            var process = new Process
+            using (var process = new Process())
             {
-                StartInfo = new ProcessStartInfo("sw_vers", "-productVersion")
+                process.StartInfo = new ProcessStartInfo("sw_vers", "-productVersion")
                 {
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
-                }
-            };
-            process.Start();
-            var result = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-            return result.Trim();
+                };
+
+                process.Start();
+                var result = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                return result.Trim();
+            }
         }
 #endif
     }

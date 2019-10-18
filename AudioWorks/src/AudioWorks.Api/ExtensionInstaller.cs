@@ -17,12 +17,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AudioWorks.Common;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -36,42 +37,39 @@ namespace AudioWorks.Api
 {
     static class ExtensionInstaller
     {
-        [NotNull] static readonly string _projectRoot = Path.Combine(
+        static readonly string _projectRoot = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "AudioWorks",
             "Extensions",
 #if NETSTANDARD2_0
             "netstandard2.0"
 #else
-            "netcoreapp2.1"
+            "netstandard2.1"
 #endif
             );
 
-        [NotNull] static readonly SourceRepository _customRepository =
-            new SourceRepository(new PackageSource(
-                    ConfigurationManager.Configuration.GetValue("UsePreReleaseExtensions", false)
-                        ? ConfigurationManager.Configuration.GetValue(
-                            "PreReleaseExtensionRepository",
-                            "https://www.myget.org/F/audioworks-extensions-prerelease/api/v3/index.json")
-                        : ConfigurationManager.Configuration.GetValue(
-                            "ExtensionRepository",
-                            "https://www.myget.org/F/audioworks-extensions-v4/api/v3/index.json")),
-                Repository.Provider.GetCoreV3());
+        static readonly SourceRepository _customRepository = new SourceRepository(
+            new PackageSource(
+                ConfigurationManager.Configuration.GetValue("UsePreReleaseExtensions", false)
+                    ? ConfigurationManager.Configuration.GetValue(
+                        "PreReleaseExtensionRepository",
+                        "https://www.myget.org/F/audioworks-extensions-prerelease/api/v3/index.json")
+                    : ConfigurationManager.Configuration.GetValue(
+                        "ExtensionRepository",
+                        "https://www.myget.org/F/audioworks-extensions-v4/api/v3/index.json")),
+            Repository.Provider.GetCoreV3());
 
-        [NotNull] static readonly SourceRepository _defaultRepository =
-            new SourceRepository(new PackageSource(
-                    ConfigurationManager.Configuration.GetValue(
-                        "DefaultRepository",
-                        "https://api.nuget.org/v3/index.json")),
-                Repository.Provider.GetCoreV3());
+        static readonly SourceRepository _defaultRepository = new SourceRepository(
+            new PackageSource(
+                ConfigurationManager.Configuration.GetValue(
+                    "DefaultRepository",
+                    "https://api.nuget.org/v3/index.json")),
+            Repository.Provider.GetCoreV3());
 
-        [NotNull] static readonly List<string> _compatibleTargets = new List<string>(new[]
+        static readonly List<string> _compatibleTargets = new List<string>(new[]
         {
-#if NETCOREAPP
-            "netcoreapp2.1",
-            "netcoreapp2.0",
-            "netcoreapp1.1",
-            "netcoreapp1.0",
+#if NETSTANDARD2_1
+            "netstandard2.1",
 #endif
             "netstandard2.0",
             "netstandard1.6",
@@ -83,13 +81,15 @@ namespace AudioWorks.Api
             "netstandard1.0"
         });
 
-        [NotNull] static readonly List<string> _fileTypesToInstall = new List<string>(new[]
+        static readonly List<string> _fileTypesToInstall = new List<string>(new[]
         {
             ".dll",
             ".dylib",
             ".pdb",
             ".so"
         });
+
+        static readonly string[] _rootAssemblyNames = GetRootAssemblyNames();
 
         internal static void Download()
         {
@@ -151,8 +151,34 @@ namespace AudioWorks.Api
             }
         }
 
-        [NotNull, ItemNotNull]
-        static IPackageSearchMetadata[] GetPublishedPackages([NotNull] ILogger logger)
+        static string[] GetRootAssemblyNames()
+        {
+            var rootDirectory = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+
+            var result = rootDirectory.GetFiles("*.dll")
+                .Select(file =>
+                {
+                    try
+                    {
+                        return AssemblyName.GetAssemblyName(file.FullName).Name;
+                    }
+                    catch (BadImageFormatException)
+                    {
+                        // The DLL might not be managed
+                        return Path.GetFileNameWithoutExtension(file.Name);
+                    }
+                });
+
+            // .NET Core applications may be loading via a runtime configuration file
+            foreach (var dependenciesFile in rootDirectory.GetFiles("*.deps.json"))
+                using (var stream = dependenciesFile.OpenRead())
+                using (var reader = new DependencyContextJsonReader())
+                    result = result.Union(reader.Read(stream).RuntimeLibraries.Select(library => library.Name));
+
+            return result.ToArray();
+        }
+
+        static IPackageSearchMetadata[] GetPublishedPackages(ILogger logger)
         {
             // Search on the thread pool to avoid deadlocks
             // ReSharper disable once ImplicitlyCapturedClosure
@@ -181,9 +207,9 @@ namespace AudioWorks.Api
         }
 
         static bool InstallPackage(
-            [NotNull] NuGetPackageManager packageManager,
-            [NotNull] IPackageSearchMetadata packageMetadata,
-            [NotNull] ILogger logger)
+            NuGetPackageManager packageManager,
+            IPackageSearchMetadata packageMetadata,
+            ILogger logger)
         {
             var extensionDir =
                 new DirectoryInfo(Path.Combine(_projectRoot, packageMetadata.Identity.ToString()));
@@ -262,29 +288,23 @@ namespace AudioWorks.Api
             return true;
         }
 
-        [Pure, NotNull]
         static string GetOSTag() => RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? "Windows"
             : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
                 ? "Linux"
                 : "MacOS";
 
-        [Pure, NotNull]
         static CancellationTokenSource GetCancellationTokenSource() => new CancellationTokenSource(
             ConfigurationManager.Configuration.GetValue("AutomaticExtensionDownloadTimeout", 30) *
             1000);
 
-        [CanBeNull]
-        static DirectoryInfo SelectDirectory([CanBeNull, ItemNotNull] IEnumerable<DirectoryInfo> directories) =>
+        static DirectoryInfo? SelectDirectory(IEnumerable<DirectoryInfo>? directories) =>
             directories?.Where(dir => _compatibleTargets.Contains(dir.Name, StringComparer.OrdinalIgnoreCase))
                 .OrderBy(dir => _compatibleTargets
                     .FindIndex(target => target.Equals(dir.Name, StringComparison.OrdinalIgnoreCase)))
                 .FirstOrDefault();
 
-        static void MoveContents(
-            [CanBeNull] DirectoryInfo source,
-            [NotNull] DirectoryInfo destination,
-            [NotNull] ILogger logger)
+        static void MoveContents(DirectoryInfo? source, DirectoryInfo destination, ILogger logger)
         {
             if (source == null || !source.Exists) return;
 
@@ -295,6 +315,19 @@ namespace AudioWorks.Api
                 if (file.Extension.Equals(".pdb", StringComparison.OrdinalIgnoreCase) &&
                     !file.Name.StartsWith("AudioWorks.Extensions", StringComparison.OrdinalIgnoreCase))
                     continue;
+
+                try
+                {
+                    // Skip any assemblies already used by AudioWorks
+                    if (file.Extension.Equals(".dll", StringComparison.OrdinalIgnoreCase) &&
+                        _rootAssemblyNames.Contains(
+                            AssemblyName.GetAssemblyName(file.FullName).Name, StringComparer.OrdinalIgnoreCase))
+                        continue;
+                }
+                catch (BadImageFormatException)
+                {
+                    // Native DLLs don't have an assembly name. Just move them.
+                }
 
                 logger.LogDebug("Moving '{0}' to '{1}'.",
                     file.FullName, destination.FullName);

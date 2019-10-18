@@ -25,7 +25,6 @@ using System.Runtime.InteropServices;
 #endif
 using System.Runtime.Loader;
 using AudioWorks.Common;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 namespace AudioWorks.Extensibility
@@ -34,10 +33,9 @@ namespace AudioWorks.Extensibility
     {
         readonly ILogger _logger = LoggerManager.LoggerFactory.CreateLogger<ExtensionAssemblyResolver>();
 
-        [NotNull]
         internal Assembly Assembly { get; }
 
-        internal ExtensionAssemblyResolver([NotNull] string path)
+        internal ExtensionAssemblyResolver(string path)
         {
             _logger.LogDebug("Loading extension '{0}'.", path);
 
@@ -53,7 +51,6 @@ namespace AudioWorks.Extensibility
             var extensionDir = Path.GetDirectoryName(path);
 
             // Resolve dependencies from both the main and extension directories
-            // ReSharper disable twice AssignNullToNotNullAttribute
             var assemblyFiles = Directory.GetFiles(
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "*.dll")
                 .Concat(Directory.GetFiles(extensionDir, "*.dll"));
@@ -66,51 +63,49 @@ namespace AudioWorks.Extensibility
                 ResolveWithLoader(assemblyFiles);
         }
 
-        void ResolveFullFramework([NotNull, ItemNotNull] IEnumerable<string> assemblyFiles) =>
+        void ResolveFullFramework(IEnumerable<string> assemblyFiles) =>
             AppDomain.CurrentDomain.AssemblyResolve += (context, args) =>
             {
-                var assemblyName = new AssemblyName(args.Name);
+                _logger.LogTrace("Attempting to resolve a dependency on '{1}'.", args.Name);
 
-                _logger.LogTrace("Attempting to resolve a dependency on '{1}'.", assemblyName);
+                var matchingAssemblyName = assemblyFiles
+                    .FirstOrDefault(assemblyFile => AssemblyName.ReferenceMatchesDefinition(
+                        AssemblyName.GetAssemblyName(assemblyFile), new AssemblyName(args.Name)));
+                if (matchingAssemblyName == null)
+                {
+                    _logger.LogTrace("Did not locate dependency '{0}'.", args.Name);
+                    return null;
+                }
 
-                var result = assemblyFiles
-                    .Where(assemblyFile => AssemblyName.ReferenceMatchesDefinition(
-                        AssemblyName.GetAssemblyName(assemblyFile), assemblyName))
-                    .Select(Assembly.LoadFrom).FirstOrDefault();
-
-                if (result != null)
-                    _logger.LogTrace("Located dependency '{0}'.", result.FullName);
-                else
-                    _logger.LogTrace("Did not locate dependency '{0}'.", assemblyName);
-
-                return result;
+                var assembly = Assembly.LoadFrom(matchingAssemblyName);
+                _logger.LogTrace("Located dependency '{0}'.", assembly.FullName);
+                return assembly;
             };
 #else
             ResolveWithLoader(assemblyFiles);
         }
 #endif
 
-        [NotNull]
-        static Assembly LoadWithLoader([CanBeNull] string path) =>
+        static Assembly LoadWithLoader(string? path) =>
             new ExtensionLoadContext().LoadFromAssemblyPath(path);
 
-        void ResolveWithLoader([NotNull, ItemNotNull] IEnumerable<string> assemblyFiles) =>
-            AssemblyLoadContext.Default.Resolving += (context, name) =>
+        void ResolveWithLoader(IEnumerable<string> assemblyFiles) =>
+            AssemblyLoadContext.Default.Resolving += (context, assemblyName) =>
             {
-                _logger.LogTrace("Attempting to resolve a dependency on '{1}'.", name.FullName);
+                _logger.LogTrace("Attempting to resolve a dependency on '{1}'.", assemblyName.Name);
 
-                var result = assemblyFiles
-                    .Where(assemblyFile => AssemblyName.ReferenceMatchesDefinition(
-                        AssemblyName.GetAssemblyName(assemblyFile),
-                        new AssemblyName(name.Name)))
-                    .Select(AssemblyLoadContext.Default.LoadFromAssemblyPath).FirstOrDefault();
+                var matchingAssemblyName = assemblyFiles
+                    .FirstOrDefault(assemblyFile => AssemblyName.ReferenceMatchesDefinition(
+                        AssemblyName.GetAssemblyName(assemblyFile), new AssemblyName(assemblyName.Name)));
+                if (matchingAssemblyName == null)
+                {
+                    _logger.LogTrace("Did not locate dependency '{0}'.", assemblyName.FullName);
+                    return null;
+                }
 
-                if (result != null)
-                    _logger.LogTrace("Located dependency '{0}'.", result.FullName);
-                else
-                    _logger.LogTrace("Did not locate dependency '{0}'.", name.FullName);
-
-                return result;
+                var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(matchingAssemblyName);
+                _logger.LogTrace("Located dependency '{0}'.", assembly.FullName);
+                return assembly;
             };
     }
 }

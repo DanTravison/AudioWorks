@@ -15,13 +15,12 @@ You should have received a copy of the GNU Affero General Public License along w
 
 using System.Collections.Generic;
 using AudioWorks.Api.Tests.DataTypes;
-using JetBrains.Annotations;
 
 namespace AudioWorks.Api.Tests.DataSources
 {
     public static class AnalyzeGroupDataSource
     {
-        [NotNull, ItemNotNull] static readonly List<object[]> _data = new List<object[]>
+        static readonly List<object[]> _data = new List<object[]>
         {
             // 8000Hz Stereo, default (simple) peaks
             new object[]
@@ -33,13 +32,13 @@ namespace AudioWorks.Api.Tests.DataSources
                     "Track 3 LPCM 8-bit 8000Hz Stereo.wav"
                 },
                 "ReplayGain",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 new[]
                 {
                     new TestAudioMetadata
                     {
-                        TrackPeak = "0.820313",
+                        TrackPeak = "0.820312",
                         AlbumPeak = "1.000000",
                         TrackGain = "-1.36",
                         AlbumGain = "-6.11"
@@ -63,7 +62,7 @@ namespace AudioWorks.Api.Tests.DataSources
                 {
                     new TestAudioMetadata
                     {
-                        TrackPeak = "0.820313",
+                        TrackPeak = "0.820312",
                         AlbumPeak = "1.000000",
                         TrackGain = "-1.36",
                         AlbumGain = "-5.90"
@@ -88,7 +87,11 @@ namespace AudioWorks.Api.Tests.DataSources
                 {
                     new TestAudioMetadata
                     {
+#if NETFRAMEWORK
                         TrackPeak = "0.820313",
+#else
+                        TrackPeak = "0.820312",
+#endif
                         AlbumPeak = "1.000000",
                         TrackGain = "-1.36",
                         AlbumGain = "-5.90"
@@ -212,7 +215,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     "Track 3 LPCM 16-bit 44100Hz Mono.wav"
                 },
                 "ReplayGain",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 new[]
                 {
@@ -391,7 +394,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     "Track 3 LPCM 16-bit 44100Hz Stereo.wav"
                 },
                 "ReplayGain",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 new[]
                 {
@@ -570,7 +573,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     "Track 3 LPCM 16-bit 48000Hz Stereo.wav"
                 },
                 "ReplayGain",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 new[]
                 {
@@ -749,7 +752,7 @@ namespace AudioWorks.Api.Tests.DataSources
                     "Track 3 LPCM 24-bit 96000Hz Stereo.wav"
                 },
                 "ReplayGain",
-                null,
+                new TestSettingDictionary(),
 #if LINUX
                 new[]
                 {
@@ -1010,10 +1013,6 @@ namespace AudioWorks.Api.Tests.DataSources
             }
         };
 
-        [NotNull, ItemNotNull]
-        public static IEnumerable<object[]> Data
-        {
-            [UsedImplicitly] get => _data;
-        }
+        public static IEnumerable<object[]> Data => _data;
     }
 }

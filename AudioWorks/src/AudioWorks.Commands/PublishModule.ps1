@@ -28,13 +28,13 @@ if (Test-Path $outputDir) { Remove-Item -Path $outputDir -Recurse -ErrorAction S
 Write-Host "Publishing $Framework PowerShell module to $outputDir..."
 
 dotnet publish "$ProjectDir" --no-build -c $Configuration -o "$outputDir" -f $Framework
-Copy-Item -Path "$outputDir\*" -Destination $outputRoot -Include "*.psd1", "*.ps1xml", "COPYING", "COPYING.LESSER" -ErrorAction Stop
-Remove-Item -Path "$outputDir\*" -Recurse -Include "*.psd1", "*.ps1xml", "*.xml", "*.pdb", "*.deps.json", "COPYING", "COPYING.LESSER" -ErrorAction Stop
+Copy-Item -Path "$outputDir\*" -Destination $outputRoot -Include "*.psd1", "*.psm1", "*.ps1xml", "COPYING" -ErrorAction Stop
+Remove-Item -Path "$outputDir\*" -Recurse -Include "*.psd1", "*.ps1xml", "*.xml", "*.pdb", "*.deps.json", "COPYING", "Icon.png" -ErrorAction Stop
 
 Write-Host "Generating help file..."
 
 # Only do this once, as platyPS can't be loaded if it is already in use.
-if ($Framework -eq "netcoreapp2.1")
+if ($Framework -eq "netstandard2.1")
 {
 	Install-Module -Name platyPS -Scope CurrentUser -Force -ErrorAction SilentlyContinue
 	Import-Module platyPS -ErrorAction Stop

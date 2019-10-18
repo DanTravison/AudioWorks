@@ -18,14 +18,12 @@ using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using AudioWorks.Common;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 namespace AudioWorks.Extensibility
 {
     abstract class ExtensionContainerBase
     {
-        [NotNull]
         protected static CompositionHost CompositionHost { get; }
 
         static ExtensionContainerBase()
@@ -34,10 +32,10 @@ namespace AudioWorks.Extensibility
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "AudioWorks",
                     "Extensions",
-#if NETCOREAPP2_1
-                    "netcoreapp2.1"))
-#else
+#if NETSTANDARD2_0
                     "netstandard2.0"))
+#else
+                    "netstandard2.1"))
 #endif
                 .GetDirectories()
                 .SelectMany(extensionDir => extensionDir.GetFiles("AudioWorks.Extensions.*.dll"))
@@ -64,7 +62,7 @@ namespace AudioWorks.Extensibility
                 .WithAssemblies(assemblies).CreateContainer();
         }
 
-        static bool TryHandle([NotNull] IPrerequisiteHandler handler, [NotNull] ILogger logger)
+        static bool TryHandle(IPrerequisiteHandler handler, ILogger logger)
         {
             try
             {
