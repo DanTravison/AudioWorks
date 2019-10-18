@@ -260,7 +260,9 @@ namespace AudioWorks.UI.ViewModels
                 .Select(prop => prop.Name))
             {
                 var propertyInfo = typeof(AudioMetadataViewModel).GetProperty(propertyName);
-                var firstValue = (string) propertyInfo.GetValue(_audioFiles[0].Metadata);
+                if (propertyInfo == null) continue;
+
+                var firstValue = (string) propertyInfo.GetValue(_audioFiles[0].Metadata)!;
 
                 if (_audioFiles.TrueForAll(audioFile =>
                     ((string) propertyInfo.GetValue(audioFile.Metadata)).Equals(firstValue, StringComparison.Ordinal)))
@@ -282,6 +284,6 @@ namespace AudioWorks.UI.ViewModels
         {
         }
 
-        public event Action<IDialogResult> RequestClose;
+        public event Action<IDialogResult>? RequestClose;
     }
 }

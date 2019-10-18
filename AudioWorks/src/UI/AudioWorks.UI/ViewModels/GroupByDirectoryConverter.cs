@@ -24,7 +24,9 @@ namespace AudioWorks.UI.ViewModels
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Path.GetDirectoryName(((AudioFileViewModel) value).Path);
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
+            return Path.GetDirectoryName(((AudioFileViewModel) value).Path)!;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
