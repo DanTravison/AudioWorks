@@ -196,15 +196,10 @@ namespace AudioWorks.Commands.Tests
             TestAudioMetadata metadata,
             string imageFileName,
             SettingDictionary settings,
-#if LINUX
-            string expectedUbuntu1604Hash,
-            string expectedUbuntu1804Hash)
-#else
-            string expectedHash)
-#endif
+            string[] validHashes)
         {
             var sourceDirectory = Path.Combine(PathUtility.GetTestFileRoot(), "Valid");
-            var path = Path.Combine("Output", "Save-AudioMetadata", "Valid", $"{index:00} - {fileName}");
+            var path = Path.Combine("Output", "Save-AudioMetadata", "Valid", $"{index:000} - {fileName}");
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             File.Copy(Path.Combine(sourceDirectory, fileName), path, true);
             var audioFile = new TaggedAudioFile(path);
@@ -228,21 +223,14 @@ namespace AudioWorks.Commands.Tests
                 ps.Invoke();
             }
 
-#if LINUX
-            Assert.Equal(LinuxUtility.GetRelease().StartsWith("Ubuntu 16.04", StringComparison.Ordinal)
-                ? expectedUbuntu1604Hash
-                : expectedUbuntu1804Hash,
-                HashUtility.CalculateHash(audioFile.Path));
-#else
-            Assert.Equal(expectedHash, HashUtility.CalculateHash(audioFile.Path));
-#endif
+            Assert.Contains(HashUtility.CalculateHash(audioFile.Path), validHashes);
         }
 
         [Theory(DisplayName = "Save-AudioMetadata method returns an error if the file is unsupported")]
         [MemberData(nameof(SaveMetadataUnsupportedFileDataSource.Data), MemberType = typeof(SaveMetadataUnsupportedFileDataSource))]
         public void UnsupportedFileReturnsError(int index, string fileName)
         {
-            var path = Path.Combine("Output", "Save-AudioMetadata", "Unsupported", $"{index:00} - {fileName}");
+            var path = Path.Combine("Output", "Save-AudioMetadata", "Unsupported", $"{index:000} - {fileName}");
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             File.Copy(Path.Combine(PathUtility.GetTestFileRoot(), "Valid", fileName), path, true);
             using (var ps = PowerShell.Create())
