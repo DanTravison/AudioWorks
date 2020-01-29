@@ -20,7 +20,7 @@ steps:
 - task: UseDotNet@2
   inputs:
     packageType: sdk
-    version: 3.1.100
+    version: 3.1.101
   displayName: 'Upgrade .NET Core SDK'
 
 - script: |
@@ -43,7 +43,7 @@ steps:
 - powershell: |
     $localAppDir = "$([System.Environment]::GetFolderPath(28))\AudioWorks"
     $localFeedDir = (New-Item "$localAppDir\LocalFeed" -ItemType Directory).FullName
-    Get-ChildItem -Path AudioWorks\src\Extensions -Filter *.nupkg -Recurse | Select-Object -ExpandProperty FullName | % { &"$env:USERPROFILE\nuget" add $_ -Source $localFeedDir -NonInteractive }
+    Get-ChildItem -Path AudioWorks\src\Extensions -Filter *.nupkg -Recurse | Select-Object -ExpandProperty FullName | % { &"$env:USERPROFILE\nuget" add $_ -Source $localFeedDir -Expand -NonInteractive }
     $roamingAppDir = "$([System.Environment]::GetFolderPath(26))\AudioWorks"
     New-Item $roamingAppDir -ItemType Directory
     $content = Get-Content AudioWorks\src\AudioWorks.Common\settings.json | ConvertFrom-Json
@@ -52,8 +52,8 @@ steps:
     $content | ConvertTo-Json | Set-Content "$roamingAppDir\settings.json"
     dotnet test AudioWorks\tests\AudioWorks.Api.Tests --no-build --configuration Release --filter "FullyQualifiedName=AudioWorks.Api.Tests.AudioFileTests.HasExpectedPath"
     $testResult = 0
-    Get-ChildItem -Path AudioWorks\tests -Filter *.Tests -Directory | % { dotnet test $_.FullName --no-build --logger trx --framework netcoreapp3.0 --configuration $env:BUILDCONFIGURATION /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=.\coverage.netcoreapp3.0.xml /p:Exclude="[AudioWorks.*.Tests]*%2c[AudioWorks.TestUtilities]*%2c[xunit.*]*" /p:IncludeDirectory="$localAppDir\Extensions\netstandard2.1\*%2c$($_.FullName)\bin\$($env:BUILDCONFIGURATION)\netcoreapp3.0\AudioWorks.Commands\netstandard2.1"; if ($LastExitCode -ne 0) { $testResult = $LastExitCode } }
-    Get-ChildItem -Path AudioWorks\tests -Filter *.Tests -Directory | % { dotnet test $_.FullName --no-build --logger trx --framework net471 --configuration $env:BUILDCONFIGURATION /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=.\coverage.net471.xml /p:Exclude="[AudioWorks.*.Tests]*%2c[AudioWorks.TestUtilities]*%2c[xunit.*]*" /p:IncludeDirectory="$localAppDir\Extensions\netstandard2.0\*%2c$($_.FullName)\bin\$($env:BUILDCONFIGURATION)\net471\AudioWorks.Commands\netstandard2.0"; if ($LastExitCode -ne 0) { $testResult = $LastExitCode } }
+    Get-ChildItem -Path AudioWorks\tests -Filter *.Tests -Directory | % { dotnet test $_.FullName --no-build --logger trx --framework netcoreapp3.1 --configuration $env:BUILDCONFIGURATION /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=.\coverage.netcore.xml /p:Exclude="[AudioWorks.*.Tests]*%2c[AudioWorks.TestUtilities]*%2c[xunit.*]*" /p:IncludeDirectory="$localAppDir\Extensions\netcoreapp3.1\*%2c$($_.FullName)\bin\$($env:BUILDCONFIGURATION)\AudioWorks.Commands\netstandard2.1"; if ($LastExitCode -ne 0) { $testResult = $LastExitCode } }
+    Get-ChildItem -Path AudioWorks\tests -Filter *.Tests -Directory | % { dotnet test $_.FullName --no-build --logger trx --framework net471 --configuration $env:BUILDCONFIGURATION /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=.\coverage.netframework.xml /p:Exclude="[AudioWorks.*.Tests]*%2c[AudioWorks.TestUtilities]*%2c[xunit.*]*" /p:IncludeDirectory="$localAppDir\Extensions\net48\*%2c$($_.FullName)\bin\$($env:BUILDCONFIGURATION)\net471\AudioWorks.Commands\netstandard2.0"; if ($LastExitCode -ne 0) { $testResult = $LastExitCode } }
     exit $testResult
   displayName: 'Run tests'
 
@@ -66,14 +66,12 @@ steps:
 
 - script: |
     reportgenerator -reports:AudioWorks\tests\*\coverage.*.xml -targetdir:Reports\Cobertura -reporttypes:Cobertura
-    reportgenerator -reports:Reports\Cobertura\Cobertura.xml -targetdir:Reports\HTML "-reporttypes:HTMLInline;HTMLChart"
   displayName: 'Generate code coverage results'
 
 - task: PublishCodeCoverageResults@1
   inputs:
     codecoverageTool: cobertura
     summaryFileLocation: $(Build.SourcesDirectory)\Reports\Cobertura\Cobertura.xml
-    reportDirectory: $(Build.SourcesDirectory)\Reports\HTML
   displayName: 'Publish code coverage results'
 
 - task: CopyFiles@2

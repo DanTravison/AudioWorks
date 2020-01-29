@@ -13,6 +13,18 @@ details.
 You should have received a copy of the GNU Affero General Public License along with AudioWorks. If not, see
 <https://www.gnu.org/licenses/>. */
 
+using AudioWorks.Common;
+using AudioWorks.Extensibility;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyModel;
+using Microsoft.Extensions.Logging;
+using NuGet.Common;
+using NuGet.Configuration;
+using NuGet.Frameworks;
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using NuGet.Protocol.Core.Types;
+using NuGet.Resolver;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,32 +33,19 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using AudioWorks.Common;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyModel;
-using Microsoft.Extensions.Logging;
-using NuGet.Common;
-using NuGet.Configuration;
-using NuGet.PackageManagement;
-using NuGet.Protocol;
-using NuGet.Protocol.Core.Types;
-using NuGet.Resolver;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace AudioWorks.Api
 {
     static class ExtensionInstaller
     {
-        static readonly string _projectRoot = Path.Combine(
+        static readonly NuGetFramework _framework = NuGetFramework.ParseFolder(RuntimeChecker.GetShortFolderName());
+
+        static readonly string _extensionRoot = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "AudioWorks",
             "Extensions",
-#if NETSTANDARD2_0
-            "netstandard2.0"
-#else
-            "netstandard2.1"
-#endif
-            );
+            _framework.GetShortFolderName());
 
         static readonly SourceRepository _customRepository = new SourceRepository(
             new PackageSource(
@@ -66,21 +65,6 @@ namespace AudioWorks.Api
                     "https://api.nuget.org/v3/index.json")),
             Repository.Provider.GetCoreV3());
 
-        static readonly List<string> _compatibleTargets = new List<string>(new[]
-        {
-#if NETSTANDARD2_1
-            "netstandard2.1",
-#endif
-            "netstandard2.0",
-            "netstandard1.6",
-            "netstandard1.5",
-            "netstandard1.4",
-            "netstandard1.3",
-            "netstandard1.2",
-            "netstandard1.1",
-            "netstandard1.0"
-        });
-
         static readonly List<string> _fileTypesToInstall = new List<string>(new[]
         {
             ".dll",
@@ -91,7 +75,7 @@ namespace AudioWorks.Api
 
         static readonly string[] _rootAssemblyNames = GetRootAssemblyNames();
 
-        internal static void Download()
+        internal static async Task DownloadAsync()
         {
             var logger = LoggerManager.LoggerFactory.CreateLogger(typeof(ExtensionInstaller).FullName);
 
@@ -101,59 +85,254 @@ namespace AudioWorks.Api
             {
                 logger.LogInformation("Beginning automatic extension updates.");
 
-                Directory.CreateDirectory(_projectRoot);
+                Directory.CreateDirectory(_extensionRoot);
 
-                var settings = Settings.LoadDefaultSettings(_projectRoot);
-                var packageManager = new NuGetPackageManager(
-                    new SourceRepositoryProvider(settings, Repository.Provider.GetCoreV3()), settings, _projectRoot);
-
-                try
+                using (var tokenSource = new CancellationTokenSource(
+                    ConfigurationManager.Configuration.GetValue("AutomaticExtensionDownloadTimeout", 30) * 1000))
                 {
-                    var publishedPackages = GetPublishedPackages(logger);
+                    var publishedPackages = await GetPublishedPackagesAsync(logger, tokenSource.Token)
+                        .ConfigureAwait(false);
 
                     var packagesInstalled = false;
-
                     foreach (var packageMetadata in publishedPackages)
-                        if (InstallPackage(packageManager, packageMetadata, logger))
+                        if (await InstallPackageAsync(packageMetadata, logger, tokenSource.Token).ConfigureAwait(false))
                             packagesInstalled = true;
 
                     // Remove any extensions that aren't published
-                    foreach (var obsoleteExtension in new DirectoryInfo(_projectRoot).GetDirectories()
-                        .Select(dir => dir.Name)
-                        .Except(publishedPackages.Select(package => package.Identity.ToString()),
-                            StringComparer.OrdinalIgnoreCase))
-                    {
-                        Directory.Delete(Path.Combine(_projectRoot, obsoleteExtension), true);
+                    if (Directory.Exists(_extensionRoot))
+                        foreach (var obsoleteExtension in new DirectoryInfo(_extensionRoot).GetDirectories()
+                            .Select(dir => dir.Name)
+                            .Except(publishedPackages.Select(package => package.Identity.ToString()),
+                                StringComparer.OrdinalIgnoreCase))
+                        {
+                            Directory.Delete(Path.Combine(_extensionRoot, obsoleteExtension), true);
 
-                        logger.LogDebug("Deleted unlisted or obsolete extension in '{0}'.",
-                            obsoleteExtension);
-                    }
+                            logger.LogDebug("Deleted unlisted or obsolete extension in '{0}'.",
+                                obsoleteExtension);
+                        }
 
                     logger.LogInformation(!packagesInstalled
                         ? "Extensions are already up to date."
                         : "Extensions successfully updated.");
                 }
-                catch (Exception e)
+            }
+        }
+
+        static async Task<IPackageSearchMetadata[]> GetPublishedPackagesAsync(
+            ILogger logger,
+            CancellationToken cancellationToken)
+        {
+            var result = (await _customRepository.GetResource<PackageSearchResource>(cancellationToken)
+                    .SearchAsync("AudioWorks.Extensions",
+                        new SearchFilter(false), 0, 100, NullLogger.Instance, cancellationToken).ConfigureAwait(false))
+#if NETSTANDARD2_0
+                .Where(package => package.Tags.Contains(GetOSTag()))
+#else
+                .Where(package => package.Tags.Contains(GetOSTag(), StringComparison.OrdinalIgnoreCase))
+#endif
+                .ToArray();
+
+            logger.LogDebug("Discovered {0} extension packages published at '{1}'.",
+                result.Length, _customRepository.PackageSource.SourceUri);
+
+            return result;
+        }
+
+        static string GetOSTag() => RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "Windows"
+            : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+                ? "Linux"
+                : "MacOS";
+
+        static async Task<bool> InstallPackageAsync(
+            IPackageSearchMetadata packageMetadata,
+            ILogger logger,
+            CancellationToken cancellationToken)
+        {
+            var extensionDir =
+                new DirectoryInfo(Path.Combine(_extensionRoot, packageMetadata.Identity.ToString()));
+            if (extensionDir.Exists)
+            {
+                logger.LogDebug("'{0}' version {1} is already installed. Skipping.",
+                    packageMetadata.Identity.Id, packageMetadata.Identity.Version.ToString());
+
+                return false;
+            }
+
+            logger.LogInformation("Installing '{0}' version {1}.",
+                packageMetadata.Identity.Id, packageMetadata.Identity.Version.ToString());
+
+            using (var cacheContext = new SourceCacheContext())
+            {
+                var packagesToInstall =
+                    await ResolvePackagesAsync(packageMetadata.Identity, cacheContext, cancellationToken)
+                        .ConfigureAwait(false);
+
+                var settings = Settings.LoadDefaultSettings(null);
+                var frameworkReducer = new FrameworkReducer();
+
+                // Download and install the package and its dependencies
+                foreach (var packageToInstall in packagesToInstall)
                 {
-                    // Timeout on search throws a TaskCanceled inside an Aggregate
-                    // Timeout on install throws an OperationCanceled inside an InvalidOperation inside an Aggregate
-                    if (e is AggregateException aggregate)
-                        foreach (var inner in aggregate.InnerExceptions)
-                            if (inner is OperationCanceledException ||
-                                inner is InvalidOperationException invalidInner &&
-                                invalidInner.InnerException is OperationCanceledException)
-                                logger.LogWarning("The configured timeout was exceeded.");
-                            else
-                                logger.LogError(inner, e.Message);
-                    else
-                        logger.LogError(e, e.Message);
+                    var downloadResource = await packageToInstall.Source
+                        .GetResourceAsync<DownloadResource>(cancellationToken)
+                        .ConfigureAwait(false);
+                    var downloadResult = await downloadResource.GetDownloadResourceResultAsync(
+                            packageToInstall,
+                            new PackageDownloadContext(cacheContext),
+                            SettingsUtility.GetGlobalPackagesFolder(settings),
+                            NullLogger.Instance,
+                            cancellationToken)
+                        .ConfigureAwait(false);
+
+                    var libGroups = downloadResult.PackageReader.GetLibItems().ToArray();
+                    var nearestLibFramework =
+                        frameworkReducer.GetNearest(_framework, libGroups.Select(l => l.TargetFramework));
+
+                    // Copy the relevant libraries directly from the NuGet cache
+                    foreach (var item in libGroups
+                        .First(l => l.TargetFramework.Equals(nearestLibFramework)).Items)
+                        CopyLibFiles(
+                            Path.Combine(Path.GetDirectoryName(((FileStream) downloadResult.PackageStream).Name), item),
+                            Path.Combine(extensionDir.FullName, Path.GetFileName(item)),
+                            logger);
+
+                    if (!packageToInstall.Id.StartsWith("AudioWorks.Extensions", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    // For AudioWorks extension packages only, copy the native library content files as well
+                    var contentGroups = downloadResult.PackageReader.GetItems("contentFiles").ToArray();
+                    if (contentGroups.Length <= 0) continue;
+
+                    var nearestContentFramework =
+                        frameworkReducer.GetNearest(_framework, contentGroups.Select(c => c.TargetFramework));
+
+                    foreach (var item in contentGroups
+                        .First(c => c.TargetFramework.Equals(nearestContentFramework)).Items)
+                    {
+                        var sourceFileName = Path.Combine(
+                            Path.GetDirectoryName(((FileStream) downloadResult.PackageStream).Name), item);
+
+                        CopyContentFiles(
+                            sourceFileName,
+                            Path.Combine(extensionDir.FullName, new DirectoryInfo(sourceFileName).Parent?.Name,
+                            Path.GetFileName(item)),
+                            logger);
+                    }
                 }
             }
+
+            return true;
+        }
+
+        static async Task<IEnumerable<SourcePackageDependencyInfo>> ResolvePackagesAsync(
+            PackageIdentity packageIdentity,
+            SourceCacheContext cacheContext,
+            CancellationToken cancellationToken)
+        {
+            // Recursively collect all dependencies
+            var dependencies = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
+            await CollectDependenciesAsync(packageIdentity, cacheContext, dependencies, cancellationToken)
+                .ConfigureAwait(false);
+
+            var resolverContext = new PackageResolverContext(
+                DependencyBehavior.Lowest,
+                new[] { packageIdentity.Id },
+                Enumerable.Empty<string>(),
+                Enumerable.Empty<PackageReference>(),
+                Enumerable.Empty<PackageIdentity>(),
+                dependencies,
+                new[] { _customRepository.PackageSource, _defaultRepository.PackageSource },
+                NullLogger.Instance);
+
+            // Resolve the dependency graph
+            var resolver = new PackageResolver();
+            return resolver.Resolve(resolverContext, CancellationToken.None)
+                .Select(p => dependencies.Single(x => PackageIdentityComparer.Default.Equals(x, p)));
+        }
+
+        static async Task CollectDependenciesAsync(
+            PackageIdentity packageIdentity,
+            SourceCacheContext cacheContext,
+            ISet<SourcePackageDependencyInfo> dependencies,
+            CancellationToken cancellationToken)
+        {
+            if (dependencies.Contains(packageIdentity)) return;
+
+            foreach (var repository in new[] { _customRepository, _defaultRepository })
+            {
+                var dependencyInfoResource = await repository.GetResourceAsync<DependencyInfoResource>(cancellationToken)
+                    .ConfigureAwait(false);
+                var dependencyInfo = await dependencyInfoResource.ResolvePackage(
+                        packageIdentity,
+                        NuGetFramework.AnyFramework,
+                        cacheContext,
+                        NullLogger.Instance,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (dependencyInfo == null) continue;
+
+                dependencies.Add(dependencyInfo);
+
+                foreach (var dependency in dependencyInfo.Dependencies)
+                    await CollectDependenciesAsync(
+                            new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion),
+                            cacheContext,
+                            dependencies,
+                            cancellationToken)
+                        .ConfigureAwait(false);
+            }
+        }
+
+        static void CopyLibFiles(string source, string destination, ILogger logger)
+        {
+            var extension = Path.GetExtension(source);
+
+            if (!_fileTypesToInstall.Contains(extension, StringComparer.OrdinalIgnoreCase))
+                return;
+
+            // Skip any 3rd party symbols
+            if (extension.Equals(".pdb", StringComparison.OrdinalIgnoreCase) &&
+                !Path.GetFileName(source).StartsWith("AudioWorks", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            try
+            {
+                // Skip any assemblies already used by AudioWorks
+                if (extension.Equals(".dll", StringComparison.OrdinalIgnoreCase) &&
+                    _rootAssemblyNames.Contains(
+                        AssemblyName.GetAssemblyName(Path.GetFullPath(source)).Name, StringComparer.OrdinalIgnoreCase))
+                    return;
+            }
+            catch (BadImageFormatException)
+            {
+                return;
+            }
+
+            if (File.Exists(destination)) return;
+            logger.LogDebug("Copying '{0}' to '{1}'.", source, destination);
+            Directory.CreateDirectory(Path.GetDirectoryName(destination));
+            File.Copy(source, destination);
+        }
+
+        static void CopyContentFiles(string source, string destination, ILogger logger)
+        {
+            var extension = Path.GetExtension(source);
+
+            if (!_fileTypesToInstall.Contains(extension, StringComparer.OrdinalIgnoreCase))
+                return;
+
+            if (File.Exists(destination)) return;
+            logger.LogDebug("Copying '{0}' to '{1}'.", source, destination);
+            Directory.CreateDirectory(Path.GetDirectoryName(destination));
+            File.Copy(source, destination);
         }
 
         static string[] GetRootAssemblyNames()
         {
-            var rootDirectory = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            var rootDirectory = new DirectoryInfo(
+                Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath));
 
             var result = rootDirectory.GetFiles("*.dll")
                 .Select(file =>
@@ -176,167 +355,6 @@ namespace AudioWorks.Api
                     result = result.Union(reader.Read(stream).RuntimeLibraries.Select(library => library.Name));
 
             return result.ToArray();
-        }
-
-        static IPackageSearchMetadata[] GetPublishedPackages(ILogger logger)
-        {
-            // Search on the thread pool to avoid deadlocks
-            // ReSharper disable once ImplicitlyCapturedClosure
-            var result = Task.Run(async () =>
-                {
-                    var cancellationTokenSource = GetCancellationTokenSource();
-                    return await (await _customRepository
-                            .GetResourceAsync<PackageSearchResource>(cancellationTokenSource.Token)
-                            .ConfigureAwait(false))
-                        .SearchAsync("AudioWorks.Extensions", new SearchFilter(false), 0, 100,
-                            NullLogger.Instance,
-                            cancellationTokenSource.Token)
-                        .ConfigureAwait(false);
-                }).Result
-#if NETSTANDARD2_0
-                    .Where(package => package.Tags.Contains(GetOSTag()))
-#else
-                .Where(package => package.Tags.Contains(GetOSTag(), StringComparison.OrdinalIgnoreCase))
-#endif
-                .ToArray();
-
-            logger.LogDebug("Discovered {0} extension packages published at '{1}'.",
-                result.Length, _customRepository.PackageSource.SourceUri);
-
-            return result;
-        }
-
-        static bool InstallPackage(
-            NuGetPackageManager packageManager,
-            IPackageSearchMetadata packageMetadata,
-            ILogger logger)
-        {
-            var extensionDir =
-                new DirectoryInfo(Path.Combine(_projectRoot, packageMetadata.Identity.ToString()));
-            if (extensionDir.Exists)
-            {
-                logger.LogDebug("'{0}' version {1} is already installed. Skipping.",
-                    packageMetadata.Identity.Id, packageMetadata.Identity.Version.ToString());
-
-                return false;
-            }
-
-            logger.LogInformation("Installing '{0}' version {1}.",
-                packageMetadata.Identity.Id, packageMetadata.Identity.Version.ToString());
-
-            extensionDir.Create();
-            var stagingDir = extensionDir.CreateSubdirectory("Staging");
-
-            var project = new ExtensionNuGetProject(stagingDir.FullName);
-
-            try
-            {
-                // Download on the thread pool to avoid deadlocks
-                Task.Run(async () =>
-                {
-                    using (var cancellationTokenSource = GetCancellationTokenSource())
-                        await packageManager.InstallPackageAsync(
-                                project,
-                                packageMetadata.Identity,
-                                new ResolutionContext(DependencyBehavior.Lowest, true, false,
-                                    VersionConstraints.None),
-                                new ExtensionProjectContext(),
-                                _customRepository,
-                                new[] { _defaultRepository },
-                                cancellationTokenSource.Token)
-                            .ConfigureAwait(false);
-                }).Wait();
-
-                // Move newly installed packages into the extension folder
-                foreach (var installedPackage in project
-                    .GetInstalledPackagesAsync(CancellationToken.None)
-                    .Result)
-                {
-                    var packageDir = new DirectoryInfo(
-                        project.GetInstalledPath(installedPackage.PackageIdentity));
-
-                    foreach (var subDir in packageDir.GetDirectories())
-                        // ReSharper disable once SwitchStatementMissingSomeCases
-                        switch (subDir.Name)
-                        {
-                            case "lib":
-                                MoveContents(
-                                    SelectDirectory(subDir.GetDirectories()),
-                                    extensionDir,
-                                    logger);
-                                break;
-
-                            case "contentFiles":
-                                MoveContents(
-                                    SelectDirectory(subDir.GetDirectories("any").FirstOrDefault()
-                                        ?.GetDirectories()),
-                                    extensionDir,
-                                    logger);
-                                break;
-                        }
-                }
-            }
-            finally
-            {
-                stagingDir.Delete(true);
-
-                // If the download was cancelled, clean up an empty extension directory
-                if (!extensionDir.EnumerateFileSystemInfos().Any())
-                    extensionDir.Delete();
-            }
-
-            return true;
-        }
-
-        static string GetOSTag() => RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-            ? "Windows"
-            : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
-                ? "Linux"
-                : "MacOS";
-
-        static CancellationTokenSource GetCancellationTokenSource() => new CancellationTokenSource(
-            ConfigurationManager.Configuration.GetValue("AutomaticExtensionDownloadTimeout", 30) *
-            1000);
-
-        static DirectoryInfo? SelectDirectory(IEnumerable<DirectoryInfo>? directories) =>
-            directories?.Where(dir => _compatibleTargets.Contains(dir.Name, StringComparer.OrdinalIgnoreCase))
-                .OrderBy(dir => _compatibleTargets
-                    .FindIndex(target => target.Equals(dir.Name, StringComparison.OrdinalIgnoreCase)))
-                .FirstOrDefault();
-
-        static void MoveContents(DirectoryInfo? source, DirectoryInfo destination, ILogger logger)
-        {
-            if (source == null || !source.Exists) return;
-
-            foreach (var file in source.GetFiles()
-                .Where(file => _fileTypesToInstall.Contains(file.Extension, StringComparer.OrdinalIgnoreCase)))
-            {
-                // Skip any 3rd party symbols
-                if (file.Extension.Equals(".pdb", StringComparison.OrdinalIgnoreCase) &&
-                    !file.Name.StartsWith("AudioWorks.Extensions", StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                try
-                {
-                    // Skip any assemblies already used by AudioWorks
-                    if (file.Extension.Equals(".dll", StringComparison.OrdinalIgnoreCase) &&
-                        _rootAssemblyNames.Contains(
-                            AssemblyName.GetAssemblyName(file.FullName).Name, StringComparer.OrdinalIgnoreCase))
-                        continue;
-                }
-                catch (BadImageFormatException)
-                {
-                    // Native DLLs don't have an assembly name. Just move them.
-                }
-
-                logger.LogDebug("Moving '{0}' to '{1}'.",
-                    file.FullName, destination.FullName);
-
-                file.MoveTo(Path.Combine(destination.FullName, file.Name));
-            }
-
-            foreach (var subDir in source.GetDirectories())
-                MoveContents(subDir, destination.CreateSubdirectory(subDir.Name), logger);
         }
     }
 }
