@@ -2,6 +2,7 @@ trigger:
   branches:
     include:
     - master
+    - dev
   paths:
     exclude:
     - .gitignore.txt
@@ -23,9 +24,23 @@ steps:
     version: 3.1.101
   displayName: 'Upgrade .NET Core SDK'
 
-- script: |
-    dotnet build AudioWorks\AudioWorks.sln --configuration $(buildConfiguration)
+- task: DotNetCoreCLI@2
+  inputs:
+    command: build
+    projects: 'AudioWorks\AudioWorks.sln'
+    arguments: '--configuration $(buildConfiguration)'
   displayName: 'Build $(buildConfiguration) configuration'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: pack
+    packagesToPack: '**\Extensions\**\*.csproj'
+    packDirectory: '$(Build.ArtifactStagingDirectory)\prereleases\extensions'
+    configurationToPack: $(buildConfiguration)
+    nobuild: true
+    buildProperties: 'VersionSuffix="pre.$(Build.BuildId)"'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+  displayName: 'Package pre-release extension packages'
 
 - powershell: |
     Invoke-WebRequest -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile nuget.exe
@@ -77,11 +92,27 @@ steps:
 - task: CopyFiles@2
   inputs:
     contents: |
-      AudioWorks\src\**\*.nupkg
-      AudioWorks\src\**\*.snupkg
-      AudioWorks\src\AudioWorks.Commands\bin\$(buildConfiguration)\AudioWorks.Commands\**
-    targetFolder: $(Build.ArtifactStagingDirectory)
-  displayName: 'Copy artifacts to staging directory'
+      AudioWorks\src\*\bin\$(buildConfiguration)\*.nupkg
+      AudioWorks\src\*\bin\$(buildConfiguration)\*.snupkg
+    targetFolder: '$(Build.ArtifactStagingDirectory)\releases\core'
+    flattenFolders: true
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Copy core libraries to artifacts directory'
+
+- task: CopyFiles@2
+  inputs:
+    contents: 'AudioWorks\src\Extensions\**\*.nupkg'
+    targetFolder: '$(Build.ArtifactStagingDirectory)\releases\extensions'
+    flattenFolders: true
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Copy extensions to artifacts directory'
+
+- task: CopyFiles@2
+  inputs:
+    contents: 'AudioWorks\src\AudioWorks.Commands\bin\$(buildConfiguration)\AudioWorks.Commands\**'
+    targetFolder: '$(Build.ArtifactStagingDirectory)\releases\module'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Copy PowerShell module to artifacts directory'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artifacts'

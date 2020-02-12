@@ -2,6 +2,7 @@ trigger:
   branches:
     include:
     - master
+    - dev
   paths:
     exclude:
     - .gitignore.txt
@@ -23,9 +24,23 @@ steps:
     version: 3.1.101
   displayName: 'Upgrade .NET Core SDK'
 
-- script: |
-    dotnet build AudioWorks/AudioWorks.sln --configuration $(buildConfiguration)
+- task: DotNetCoreCLI@2
+  inputs:
+    command: build
+    projects: 'AudioWorks/AudioWorks.sln'
+    arguments: '--configuration $(buildConfiguration)'
   displayName: 'Build $(buildConfiguration) configuration'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: pack
+    packagesToPack: '**/Extensions/**/*.csproj'
+    packDirectory: '$(Build.ArtifactStagingDirectory)/prereleases/extensions'
+    configurationToPack: $(buildConfiguration)
+    nobuild: true
+    buildProperties: 'VersionSuffix="pre.$(Build.BuildId)"'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+  displayName: 'Package pre-release extension packages'
 
 - script: |
     sudo curl -o /usr/local/bin/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
@@ -67,9 +82,11 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    contents: 'AudioWorks/src/Extensions/**/*.MacOS.*.nupkg'
-    targetFolder: $(Build.ArtifactStagingDirectory)
-  displayName: 'Copy artifacts to staging directory'
+    contents: 'AudioWorks/src/Extensions/**/*.nupkg'
+    targetFolder: '$(Build.ArtifactStagingDirectory)/releases/extensions'
+    flattenFolders: true
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: 'Copy extensions to artifacts directory'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artifacts'

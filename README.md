@@ -6,11 +6,11 @@ A full user interface (Windows only) is in development.
 
 This project supplants [PowerShell Audio](https://github.com/jherby2k/PowerShellAudio) by targetting both Windows PowerShell and PowerShell Core (Windows, Linux and MacOS).
 
-Platform | Status (Master Branch)
--- | --
-Windows | [![Build Status](https://dev.azure.com/jherby2k/AudioWorks/_apis/build/status/AudioWorks%20for%20Windows?branchName=master)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=2?branchName=master) [![Code Coverage](https://img.shields.io/azure-devops/coverage/jherby2k/AudioWorks/2.svg)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=2?branchName=master)
-Linux | [![Build Status](https://dev.azure.com/jherby2k/AudioWorks/_apis/build/status/AudioWorks%20for%20Linux?branchName=master)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=3?branchName=master) [![Code Coverage](https://img.shields.io/azure-devops/coverage/jherby2k/AudioWorks/3.svg)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=3?branchName=master)
-MacOS | [![Build Status](https://dev.azure.com/jherby2k/AudioWorks/_apis/build/status/AudioWorks%20for%20MacOS?branchName=master)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=4?branchName=master) [![Code Coverage](https://img.shields.io/azure-devops/coverage/jherby2k/AudioWorks/4.svg)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=4?branchName=master)
+Platform | Build Status (master) | Build Status (dev) | Deployment Status
+-- | -- | -- | --
+Windows | [![Build Status](https://dev.azure.com/jherby2k/AudioWorks/_apis/build/status/AudioWorks%20for%20Windows?branchName=master)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=2?branchName=master) [![Code Coverage](https://img.shields.io/azure-devops/coverage/jherby2k/AudioWorks/2.svg)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=2?branchName=master) | [![Build Status](https://dev.azure.com/jherby2k/AudioWorks/_apis/build/status/AudioWorks%20for%20Windows?branchName=dev)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=2?branchName=dev) | ![Deployment Status](https://vsrm.dev.azure.com/jherby2k/_apis/public/Release/badge/ce2541e1-667c-4be1-a926-7d44ff89db07/2/2)
+Linux | [![Build Status](https://dev.azure.com/jherby2k/AudioWorks/_apis/build/status/AudioWorks%20for%20Linux?branchName=master)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=3?branchName=master) [![Code Coverage](https://img.shields.io/azure-devops/coverage/jherby2k/AudioWorks/3.svg)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=3?branchName=master) | [![Build Status](https://dev.azure.com/jherby2k/AudioWorks/_apis/build/status/AudioWorks%20for%20Linux?branchName=dev)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=3?branchName=dev) | ![Deployment Status](https://vsrm.dev.azure.com/jherby2k/_apis/public/Release/badge/ce2541e1-667c-4be1-a926-7d44ff89db07/4/4)
+MacOS | [![Build Status](https://dev.azure.com/jherby2k/AudioWorks/_apis/build/status/AudioWorks%20for%20MacOS?branchName=master)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=4?branchName=master) [![Code Coverage](https://img.shields.io/azure-devops/coverage/jherby2k/AudioWorks/4.svg)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=4?branchName=master) | [![Build Status](https://dev.azure.com/jherby2k/AudioWorks/_apis/build/status/AudioWorks%20for%20MacOS?branchName=dev)](https://dev.azure.com/jherby2k/AudioWorks/_build/latest?definitionId=4?branchName=dev) | ![Deployment Status](https://vsrm.dev.azure.com/jherby2k/_apis/public/Release/badge/ce2541e1-667c-4be1-a926-7d44ff89db07/3/3)
 
 ### System Requirements
 AudioWorks runs on Windows 7+, MacOS 10.13+, and Ubuntu (18.04 or 16.04). Other 64-bit Linux distributions may work, but may require additional dependencies and are currently untested.
@@ -39,12 +39,12 @@ Keep the module up to date with `Update-Module -Name AudioWorks.Commands -AllowP
 The .NET API is available via [NuGet](https://www.nuget.org/packages/AudioWorks.Api).
 
 ### Additional Requirements for Building / Testing
-* [.NET Core SDK 3.0.100+](https://dotnet.github.io/)
+* [.NET Core SDK 3.1.100+](https://dotnet.github.io/)
 * Windows 7+, MacOS 10.13+, Ubuntu 16.04 or Ubuntu 18.04.
-* [Visual Studio 2019 16.3](https://visualstudio.microsoft.com/downloads) (optional - Windows only)
-* [Visual Studio 2019 for Mac 8.3+](https://visualstudio.microsoft.com/downloads) (optional - Mac only)
+* [Visual Studio 2019 16.4](https://visualstudio.microsoft.com/downloads) (optional - Windows only)
+* [Visual Studio 2019 for Mac 8.4+](https://visualstudio.microsoft.com/downloads) (optional - Mac only)
 * [Visual Studio Code](https://code.visualstudio.com/) (optional - all platforms)
-* [ReSharper 2019.2+](https://www.jetbrains.com/resharper) (optional - Windows only)
+* [ReSharper 2019.3+](https://www.jetbrains.com/resharper) (optional - Windows only)
 
 ### Special Thanks
 This project wouldn't be possible without the work of these other fine projects and organizations:
