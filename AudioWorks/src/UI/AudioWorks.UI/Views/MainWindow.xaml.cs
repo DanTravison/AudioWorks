@@ -43,6 +43,6 @@ namespace AudioWorks.UI.Views
             e.Handled = true;
         }
 
-        void ExitButton_OnClick(object sender, RoutedEventArgs e) => Close();
+        void ExitMenuItem_OnClick(object sender, RoutedEventArgs e) => Close();
     }
 }

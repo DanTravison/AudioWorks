@@ -105,26 +105,27 @@ You should have received a copy of the GNU Affero General Public License along w
 
         <fluent:Ribbon DockPanel.Dock="Top"
                        IsQuickAccessToolBarVisible="False">
-            <fluent:RibbonTabItem Header="Home">
 
-                <fluent:RibbonGroupBox Header="File" ItemContainerStyle="{StaticResource LargeRibbonButton}">
-                    <fluent:DropDownButton Header="Open"
-                                           LargeIcon="{StaticResource OpenFileDialogImage}"
-                                           fluent:KeyTip.Keys="O">
-                        <fluent:MenuItem Header="Select File(s)"
-                                         Command="{Binding OpenFilesCommand}"
-                                         Icon="{StaticResource OpenFileImage}"
-                                         fluent:KeyTip.Keys="F"/>
-                        <fluent:MenuItem Header="Search a Directory"
-                                         Command="{Binding OpenDirectoryCommand}"
-                                         Icon="{StaticResource OpenFolderImage}"
-                                         fluent:KeyTip.Keys="D"/>
-                    </fluent:DropDownButton>
-                    <fluent:Button Header="Exit"
-                                   Click="ExitButton_OnClick"
-                                   LargeIcon="{StaticResource ExitImage}"
-                                   fluent:KeyTip.Keys="X"/>
-                </fluent:RibbonGroupBox>
+            <fluent:Ribbon.Menu>
+                <fluent:ApplicationMenu Header="File">
+                    <fluent:MenuItem Header="Open"
+                                     IsSplited="True"
+                                     Icon="{StaticResource OpenFileDialogImage}">
+                        <fluent:MenuItem Header="File(s)"
+                                         Icon="{StaticResource OpenFileImage}"/>
+                        <fluent:MenuItem Header="Directory (recursive)"
+                                         Icon="{StaticResource OpenFolderImage}"/>
+                    </fluent:MenuItem>
+                    <fluent:MenuItem Header="About AudioWorks"
+                                     Icon="{StaticResource StatusInfoTipImage}"
+                                     Width="200"/>
+                    <fluent:MenuItem Header="Exit"
+                                     Icon="{StaticResource ExitImage}"
+                                     Click="ExitMenuItem_OnClick"/>
+                </fluent:ApplicationMenu>
+            </fluent:Ribbon.Menu>
+
+            <fluent:RibbonTabItem Header="Home">
 
                 <fluent:RibbonGroupBox Header="Options" ItemContainerStyle="{StaticResource LargeRibbonButton}">
                     <fluent:DropDownButton Header="Grouping"
