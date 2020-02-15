@@ -112,8 +112,10 @@ You should have received a copy of the GNU Affero General Public License along w
                                      IsSplited="True"
                                      Icon="{StaticResource OpenFileDialogImage}">
                         <fluent:MenuItem Header="File(s)"
+                                         Description="Opens one or more audio files"
                                          Icon="{StaticResource OpenFileImage}"/>
                         <fluent:MenuItem Header="Directory (recursive)"
+                                         Description="Opens all audio files located within a directory or directory tree"
                                          Icon="{StaticResource OpenFolderImage}"/>
                     </fluent:MenuItem>
                     <fluent:MenuItem Header="About AudioWorks"
