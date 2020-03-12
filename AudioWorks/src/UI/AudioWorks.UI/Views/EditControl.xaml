@@ -58,15 +58,16 @@ You should have received a copy of the GNU Affero General Public License along w
                     Value="True"/>
         </Style>
         <Style TargetType="mahapps:ToggleSwitch"
-               x:Key="ToggleSwitch"
-               BasedOn="{StaticResource MahApps.Styles.ToggleSwitch.Win10}">
+               x:Key="ToggleSwitch">
             <Setter Property="VerticalAlignment"
                     Value="Top"/>
+            <Setter Property="Width"
+                    Value="50"/>
             <Setter Property="Margin"
-                    Value="5,3,0,0"/>
-            <Setter Property="OnLabel"
+                    Value="11,0,0,0"/>
+            <Setter Property="OnContent"
                     Value="{x:Null}"/>
-            <Setter Property="OffLabel"
+            <Setter Property="OffContent"
                     Value="{x:Null}"/>
         </Style>
     </UserControl.Resources>
@@ -119,7 +120,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="1"
                                   Grid.Column="1"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding TrackNumberIsCommon}"
+                                  IsOn="{Binding TrackNumberIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
             <Label Grid.Row="1"
                    Grid.Column="2"
@@ -138,7 +139,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="1"
                                   Grid.Column="4"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding TrackCountIsCommon}"
+                                  IsOn="{Binding TrackCountIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
 
             <Label Grid.Row="2"
@@ -154,7 +155,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="3"
                                   Grid.Column="6"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding SongTitleIsCommon}"
+                                  IsOn="{Binding SongTitleIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
 
             <Label Grid.Row="4"
@@ -170,7 +171,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="5"
                                   Grid.Column="6"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding ArtistIsCommon}"
+                                  IsOn="{Binding ArtistIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
 
             <Label Grid.Row="6"
@@ -186,7 +187,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="7"
                                   Grid.Column="6"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding AlbumArtistIsCommon}"
+                                  IsOn="{Binding AlbumArtistIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
 
             <Label Grid.Row="8"
@@ -202,7 +203,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="9"
                                   Grid.Column="6"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding ComposerIsCommon}"
+                                  IsOn="{Binding ComposerIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
 
             <Label Grid.Row="10"
@@ -218,7 +219,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="11"
                                   Grid.Column="6"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding AlbumIsCommon}"
+                                  IsOn="{Binding AlbumIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
 
             <Label Grid.Row="12"
@@ -234,7 +235,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="13"
                                   Grid.Column="6"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding GenreIsCommon}"
+                                  IsOn="{Binding GenreIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
 
             <Label Grid.Row="14"
@@ -252,7 +253,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="15"
                                   Grid.Column="1"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding YearIsCommon}"
+                                  IsOn="{Binding YearIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
 
             <Label Grid.Row="16"
@@ -270,7 +271,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="17"
                                   Grid.Column="1"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding DayIsCommon}"
+                                  IsOn="{Binding DayIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
             <Label Grid.Row="16"
                    Grid.Column="3"
@@ -287,7 +288,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="17"
                                   Grid.Column="4"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding MonthIsCommon}"
+                                  IsOn="{Binding MonthIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
 
             <Label Grid.Row="18"
@@ -303,7 +304,7 @@ You should have received a copy of the GNU Affero General Public License along w
             <mahapps:ToggleSwitch Grid.Row="19"
                                   Grid.Column="6"
                                   Style="{StaticResource ToggleSwitch}"
-                                  IsChecked="{Binding CommentIsCommon}"
+                                  IsOn="{Binding CommentIsCommon}"
                                   Visibility="{Binding IsMultiple, Converter={StaticResource VisibilityConverter}}"/>
 
             <StackPanel Grid.Row="20"

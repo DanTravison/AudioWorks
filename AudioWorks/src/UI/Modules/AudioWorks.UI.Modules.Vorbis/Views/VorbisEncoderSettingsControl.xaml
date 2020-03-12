@@ -51,7 +51,7 @@ You should have received a copy of the GNU Affero General Public License along w
         <Label Content="Force a constant bit rate"
                Visibility="{Binding BitRateEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
                Style="{StaticResource SettingLabel}"/>
-        <mahapps:ToggleSwitch IsChecked="{Binding ForceCbr}"
+        <mahapps:ToggleSwitch IsOn="{Binding ForceCbr}"
                               Visibility="{Binding BitRateEnabled, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
                               Style="{StaticResource SettingToggleSwitch}"/>
         <Label Content="Gain adjustment"

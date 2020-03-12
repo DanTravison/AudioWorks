@@ -33,7 +33,7 @@ You should have received a copy of the GNU Affero General Public License along w
                   Style="{StaticResource SettingComboBox}"/>
         <Label Content="Set a fixed padding size"
                Style="{StaticResource SettingLabel}"/>
-        <mahapps:ToggleSwitch IsChecked="{Binding ConfigurePadding}"
+        <mahapps:ToggleSwitch IsOn="{Binding ConfigurePadding}"
                               Style="{StaticResource SettingToggleSwitch}"/>
         <Label Content="Padding (in bytes)"
                Style="{StaticResource SettingLabel}"/>
