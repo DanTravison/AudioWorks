@@ -36,14 +36,10 @@ namespace AudioWorks.Commands
             {
                 var result = new TelemetryClient(config);
                 result.Context.Device.OperatingSystem = RuntimeInformation.OSDescription;
-                result.Context.Component.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-#if NETSTANDARD2_0
-                result.Context.Properties["Framework"] = RuntimeInformation.FrameworkDescription;
-                result.Context.Properties["Architecture"] = RuntimeInformation.ProcessArchitecture.ToString();
-#else
+                result.Context.Component.Version =
+                    Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
                 result.Context.GlobalProperties["Framework"] = RuntimeInformation.FrameworkDescription;
                 result.Context.GlobalProperties["Architecture"] = RuntimeInformation.ProcessArchitecture.ToString();
-#endif
 
                 return result;
             }
