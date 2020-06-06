@@ -21,9 +21,6 @@ namespace AudioWorks.UI.Views
     {
         public IDialogResult? Result { get; set; }
 
-        public CustomDialogWindow()
-        {
-            InitializeComponent();
-        }
+        public CustomDialogWindow() => InitializeComponent();
     }
 }

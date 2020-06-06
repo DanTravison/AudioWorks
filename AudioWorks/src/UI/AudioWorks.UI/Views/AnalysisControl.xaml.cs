@@ -17,9 +17,6 @@ namespace AudioWorks.UI.Views
 {
     public sealed partial class AnalysisControl
     {
-        public AnalysisControl()
-        {
-            InitializeComponent();
-        }
+        public AnalysisControl() => InitializeComponent();
     }
 }
