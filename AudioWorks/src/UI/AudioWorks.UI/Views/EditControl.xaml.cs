@@ -17,9 +17,6 @@ namespace AudioWorks.UI.Views
 {
     public sealed partial class EditControl
     {
-        public EditControl()
-        {
-            InitializeComponent();
-        }
+        public EditControl() => InitializeComponent();
     }
 }
