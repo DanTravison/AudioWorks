@@ -46,8 +46,7 @@ You should have received a copy of the GNU Affero General Public License along w
                     Value="True"/>
         </Style>
         <Style TargetType="mahapps:NumericUpDown"
-               x:Key="NumericUpDown"
-               BasedOn="{StaticResource {x:Type mahapps:NumericUpDown}}">
+               x:Key="NumericUpDown">
             <Setter Property="HorizontalAlignment"
                     Value="Left"/>
             <Setter Property="Width"
