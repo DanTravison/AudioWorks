@@ -51,9 +51,6 @@ namespace AudioWorks.UI
             ThemeManager.Current.SyncThemeColorSchemeWithWindowsAccentColor();
             ThemeManager.Current.SyncThemeBaseColorWithWindowsAppModeSetting();
 
-            Fluent.ThemeManager.IsAutomaticWindowsAppModeSettingSyncEnabled = true;
-            Fluent.ThemeManager.SyncThemeWithWindowsAppModeSetting();
-
             base.OnStartup(e);
         }
 
